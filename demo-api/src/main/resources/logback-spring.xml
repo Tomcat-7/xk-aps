@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>  
+    <!--<include resource="org/springframework/boot/logging/logback/base.xml"/>-->
+	<conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter" />
+	<conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter" />
+	<!-- 彩色日志格式 -->
+	<property name="CONSOLE_LOG_PATTERN" value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr([%15.15t]){faint} %clr(---){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wex"/>
+	<property name="FILE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${PID:- } --- [%t] %-40.40logger{39} : %m%n%wex"/>
+    <springProfile name="dev">
+	    <!-- log4jdbc-log4j2 -->  
+	    <logger name="jdbc.sqlonly"        level="ERROR"/>
+	    <logger name="jdbc.sqltiming"      level="ERROR"/>
+	    <logger name="jdbc.audit"          level="OFF"/>  
+	    <logger name="jdbc.resultset"      level="ERROR"/>
+	    <logger name="jdbc.resultsettable" level="ERROR"/>
+	    <logger name="jdbc.connection"     level="OFF"/>
+		<property name="LOG_HOME" value="xklog/" />
+		<logger name="org.hibernate.engine.QueryParameters" level="ERROR" />
+	</springProfile>
+	
+	<springProfile name="test">
+	    <!-- log4jdbc-log4j2 -->  
+	    <logger name="jdbc.sqlonly"        level="ERROR"/>  
+	    <logger name="jdbc.sqltiming"      level="ERROR"/>  
+	    <logger name="jdbc.audit"          level="ERROR"/>  
+	    <logger name="jdbc.resultset"      level="ERROR"/>  
+	    <logger name="jdbc.resultsettable" level="ERROR"/>  
+	    <logger name="jdbc.connection"     level="ERROR"/>
+		<property name="LOG_HOME" value="xklog/log/" />
+		<logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE" />
+	</springProfile>
+
+	<springProfile name="prod">
+		<!-- log4jdbc-log4j2 -->
+		<logger name="jdbc.sqlonly"        level="ERROR"/>
+		<logger name="jdbc.sqltiming"      level="ERROR"/>
+		<logger name="jdbc.audit"          level="ERROR"/>
+		<logger name="jdbc.resultset"      level="ERROR"/>
+		<logger name="jdbc.resultsettable" level="ERROR"/>
+		<logger name="jdbc.connection"     level="ERROR"/>
+		<property name="LOG_HOME" value="xkes/log/" />
+		<logger name="org.hibernate.engine.query.HQLQueryPlan" level="DEBUG" />
+	</springProfile>
+
+
+
+		<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+			<withJansi>true</withJansi>
+			<encoder>
+				<!-- %.-1level 只显示信息级别的首字母,%-5level 左对齐显示信息级别全称 -->
+				<Pattern>${CONSOLE_LOG_PATTERN}</Pattern>
+			</encoder>
+		</appender>
+		<appender name="TRACE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<file>${LOG_HOME}/trace/trace.log</file>
+			<append>true</append>
+			<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+				<fileNamePattern>${LOG_HOME}/trace/trace.%d{yyyy-MM-ddssSSS}.%i.log</fileNamePattern>
+				<maxFileSize>400KB</maxFileSize>
+				<maxHistory>30</maxHistory>
+				<totalSizeCap>10GB</totalSizeCap>
+			</rollingPolicy>
+			<encoder>
+				<pattern>[%date{yyyy-MM-dd HH:mm:ss}] [%-5level] [%logger:%line] --%mdc{client} %msg%n</pattern>
+			</encoder>
+			<filter class="ch.qos.logback.classic.filter.LevelFilter">
+				<level>TRACE</level>
+				<onMatch>ACCEPT</onMatch>
+				<onMismatch>DENY</onMismatch>
+			</filter>
+		</appender>
+		<appender name="INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<file>${LOG_HOME}/info/info.log</file>
+			<append>true</append>
+			<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+				<fileNamePattern>${LOG_HOME}/info/info.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+				<maxFileSize>400KB</maxFileSize>
+				<maxHistory>30</maxHistory>
+				<totalSizeCap>10GB</totalSizeCap>
+			</rollingPolicy>
+			<encoder>
+				<pattern>[%date{yyyy-MM-dd HH:mm:ss}] [%-5level] [%logger:%line] --%mdc{client} %msg%n</pattern>
+			</encoder>
+			<filter class="ch.qos.logback.classic.filter.LevelFilter">
+				<level>INFO</level>
+				<onMatch>ACCEPT</onMatch>
+				<onMismatch>DENY</onMismatch>
+			</filter>
+		</appender>
+		<appender name="DEBUG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<file>${LOG_HOME}/debug/debug.log</file>
+			<append>true</append>
+			<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+				<fileNamePattern>${LOG_HOME}/debug/debug.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+				<maxFileSize>400KB</maxFileSize>
+				<maxHistory>30</maxHistory>
+				<totalSizeCap>10GB</totalSizeCap>
+			</rollingPolicy>
+			<encoder>
+				<pattern>[%date{yyyy-MM-dd HH:mm:ss}] [%-5level] [%logger:%line] --%mdc{client} %msg%n</pattern>
+			</encoder>
+			<filter class="ch.qos.logback.classic.filter.LevelFilter">
+				<level>DEBUG</level>
+				<onMatch>ACCEPT</onMatch>
+				<onMismatch>DENY</onMismatch>
+			</filter>
+		</appender>
+		<appender name="WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<file>${LOG_HOME}/warn/warn.log</file>
+			<append>true</append>
+			<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+				<fileNamePattern>${LOG_HOME}/warn/warn.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+				<maxFileSize>400KB</maxFileSize>
+				<maxHistory>30</maxHistory>
+				<totalSizeCap>10GB</totalSizeCap>
+			</rollingPolicy>
+			<encoder>
+				<pattern>[%date{yyyy-MM-dd HH:mm:ss}] [%-5level] [%logger:%line] --%mdc{client} %msg%n</pattern>
+			</encoder>
+			<filter class="ch.qos.logback.classic.filter.LevelFilter">
+				<level>WARN</level>
+				<onMatch>ACCEPT</onMatch>
+				<onMismatch>DENY</onMismatch>
+			</filter>
+		</appender>
+		<appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<file>${LOG_HOME}/error/error.log</file>
+			<append>true</append>
+			<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+				<fileNamePattern>${LOG_HOME}/logs/error.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+				<maxFileSize>400KB</maxFileSize>
+				<maxHistory>30</maxHistory>
+				<totalSizeCap>10GB</totalSizeCap>
+			</rollingPolicy>
+			<encoder>
+				<pattern>[%date{yyyy-MM-dd HH:mm:ss}] [%-5level] [%logger:%line] --%mdc{client} %msg%n</pattern>
+			</encoder>
+			<filter class="ch.qos.logback.classic.filter.LevelFilter">
+				<level>ERROR</level>
+				<onMatch>ACCEPT</onMatch>
+				<onMismatch>DENY</onMismatch>
+			</filter>
+		</appender>
+
+	<!--<logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE" />-->
+	<!--<logger name="org.hibernate.type.descriptor.sql.BasicExtractor" level="DEBUG" />-->
+	<!--<logger name="org.hibernate.SQL" level="DEBUG" />-->
+	<!--<logger name="org.hibernate.engine.QueryParameters" level="DEBUG" />-->
+	<!--<logger name="org.hibernate.engine.query.HQLQueryPlan" level="DEBUG" />-->
+
+
+	<!-- 日志输出级别 -->
+	<root level="INFO">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="INFO"/>
+		<appender-ref ref="WARN"/>
+		<appender-ref ref="ERROR"/>
+	</root>
+
+</configuration>
