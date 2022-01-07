@@ -1,9 +1,12 @@
 package com.xk.aps.service;
 
+import com.xk.aps.model.dto.XkApsAttendanceDto;
 import com.xk.framework.common.PageDto;
 import com.xk.framework.common.PageQueryDto;
 import com.xk.aps.model.dto.XkApsBomDto;
 import com.xk.aps.model.entity.XkApsBomEntity;
+
+import java.util.List;
 
 /**
 * 描述：一键生成单表模块 服务实现层接口
@@ -50,4 +53,5 @@ public interface IXkApsBomService{
     */
    void remove(String id);
 
+    List<XkApsBomDto> listAll();
 }

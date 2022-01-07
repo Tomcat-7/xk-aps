@@ -29,8 +29,8 @@ public class XkApsCalendarDto extends BaseDto{
     /**
     *资源名称
     */
-    @ApiModelProperty(value = "资源名称",example = "0")
-    private Integer resourceName;
+    @ApiModelProperty(value = "资源名称")
+    private String resourceName;
     /**
     *生产时间(例如周一->周五,全日期)
     */
@@ -51,15 +51,6 @@ public class XkApsCalendarDto extends BaseDto{
     */
     @ApiModelProperty(value = "备注")
     private String calendarNote;
-    /**
-    *
-    */
-    @ApiModelProperty(value = "")
-    private Date createTime;
-    /**
-    *
-    */
-    @ApiModelProperty(value = "")
-    private Date updateTime;
+
 
 }

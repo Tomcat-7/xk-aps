@@ -1,11 +1,14 @@
 package com.xk.aps.service.impl;
 
 
+import com.xk.aps.model.dto.XkApsOrderDto;
+import com.xk.aps.model.entity.XkApsOrderEntity;
 import com.xk.framework.common.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +18,7 @@ import com.xk.aps.model.entity.XkApsResourceEntity;
 import com.xk.aps.service.IXkApsResourceService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
 * 描述：一键生成单表模块服务实现层
@@ -105,6 +109,29 @@ public class XkApsResourceServiceImpl implements IXkApsResourceService {
             logger.error("删除数据失败,{}",e);
             e.printStackTrace();
             throw new ServiceException("删除数据失败", CommonErrorCode.DELETE_ERROR);
+        }
+    }
+
+    /**
+     * 获取所有资源表信息
+     */
+    //@Cacheable(value = {"Resource"}, key = "#root.method.name",sync = true)
+    @Override
+    public List<XkApsResourceDto> listAll() {
+        try {
+            List<XkApsResourceEntity> resourceEntities = xkApsResourceRepository.findAll();
+            if (resourceEntities == null) {
+                return null;
+            }
+            List<XkApsResourceDto> collect = resourceEntities.stream().map((item) -> {
+                XkApsResourceDto xkApsResourceDto = BeanMapperUtils.map(item, XkApsResourceDto.class);
+                return xkApsResourceDto;
+            }).collect(Collectors.toList());
+            return collect;
+        } catch (Exception e) {
+            logger.error("查询所有数据失败,{}",e);
+            e.printStackTrace();
+            throw new ServiceException("查询所有数据失败", CommonErrorCode.SELECT_ERROR);
         }
     }
 

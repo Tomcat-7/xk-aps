@@ -1,6 +1,8 @@
 package com.xk.aps.service.impl;
 
 
+import com.xk.aps.model.dto.XkApsOperationDto;
+import com.xk.aps.model.entity.XkApsOperationEntity;
 import com.xk.aps.model.entity.XkApsOrderEntity;
 import com.xk.aps.service.IXkApsOrderService;
 import com.xk.framework.common.*;
@@ -8,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +18,7 @@ import com.xk.aps.dao.XkApsOrderRepository;
 import com.xk.aps.model.dto.XkApsOrderDto;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
 * 描述：一键生成单表模块服务实现层
@@ -105,6 +109,28 @@ public class XkApsOrderServiceImpl implements IXkApsOrderService {
             logger.error("删除数据失败,{}",e);
             e.printStackTrace();
             throw new ServiceException("删除数据失败", CommonErrorCode.DELETE_ERROR);
+        }
+    }
+    /**
+     * 获取所有订单表信息
+     */
+    //@Cacheable(value = {"Order"}, key = "#root.method.name",sync = true)
+    @Override
+    public List<XkApsOrderDto> listAll() {
+        try {
+            List<XkApsOrderEntity> orderEntities = xkApsOrderRepository.findAll();
+            if (orderEntities == null) {
+                return null;
+            }
+            List<XkApsOrderDto> collect = orderEntities.stream().map((item) -> {
+                XkApsOrderDto xkApsOrderDto = BeanMapperUtils.map(item, XkApsOrderDto.class);
+                return xkApsOrderDto;
+            }).collect(Collectors.toList());
+            return collect;
+        } catch (Exception e) {
+            logger.error("查询所有数据失败,{}",e);
+            e.printStackTrace();
+            throw new ServiceException("查询所有数据失败", CommonErrorCode.SELECT_ERROR);
         }
     }
 

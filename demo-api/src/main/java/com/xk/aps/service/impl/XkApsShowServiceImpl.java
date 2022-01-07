@@ -2,13 +2,16 @@ package com.xk.aps.service.impl;
 
 
 import com.xk.aps.dao.XkApsShowRepository;
+import com.xk.aps.model.dto.XkApsResourceDto;
 import com.xk.aps.model.dto.XkApsShowDto;
+import com.xk.aps.model.entity.XkApsResourceEntity;
 import com.xk.framework.common.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +19,7 @@ import com.xk.aps.model.entity.XkApsShowEntity;
 import com.xk.aps.service.IXkApsShowService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
 * 描述：一键生成单表模块服务实现层
@@ -108,6 +112,28 @@ public class XkApsShowServiceImpl implements IXkApsShowService {
             throw new ServiceException("删除数据失败", CommonErrorCode.DELETE_ERROR);
         }
     }
+    /**
+     * 获取所有排程结果表信息
+     */
+    //@Cacheable(value = {"Resource"}, key = "#root.method.name",sync = true)
+    @Override
+    public List<XkApsShowDto> listAll() {
+        try {
+            List<XkApsShowEntity> showEntities = xkApsShowRepository.findAll();
+            if (showEntities == null) {
+                return null;
+            }
+            List<XkApsShowDto> collect = showEntities.stream().map((item) -> {
+                XkApsShowDto xkApsShowDto = BeanMapperUtils.map(item, XkApsShowDto.class);
+                return xkApsShowDto;
+            }).collect(Collectors.toList());
+            return collect;
+        } catch (Exception e) {
+            logger.error("查询所有数据失败,{}",e);
+            e.printStackTrace();
+            throw new ServiceException("查询所有数据失败", CommonErrorCode.SELECT_ERROR);
+        }
+    }
 
     /**
     * 分页获取一键生成单表模块信息
@@ -134,8 +160,6 @@ public class XkApsShowServiceImpl implements IXkApsShowService {
             throw new ServiceException("查询数据失败", CommonErrorCode.SELECT_ERROR);
         }
     }
-
-
 
 }
 

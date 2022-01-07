@@ -5,6 +5,8 @@ import com.xk.framework.common.PageDto;
 import com.xk.framework.common.PageQueryDto;
 import com.xk.aps.model.entity.XkApsCalendarEntity;
 
+import java.util.List;
+
 
 /**
 * 描述：一键生成单表模块 服务实现层接口
@@ -51,4 +53,5 @@ public interface IXkApsCalendarService{
     */
     void remove(String id);
 
+    List<XkApsCalendarDto> listAll();
 }

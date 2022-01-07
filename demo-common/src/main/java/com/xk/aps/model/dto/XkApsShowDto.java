@@ -71,15 +71,5 @@ public class XkApsShowDto extends BaseDto{
     */
     @ApiModelProperty(value = "备注")
     private String bomNote;
-    /**
-    *
-    */
-    @ApiModelProperty(value = "")
-    private Date createTime;
-    /**
-    *
-    */
-    @ApiModelProperty(value = "")
-    private Date updateTime;
 
 }

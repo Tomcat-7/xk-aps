@@ -33,7 +33,7 @@ public class XkApsCalendarEntity extends BaseEntity  {
     *资源名称
     */
     @Column(name = "resource_name")
-    private Integer resourceName;
+    private String resourceName;
     /**
     *生产时间(例如周一->周五,全日期)
     */

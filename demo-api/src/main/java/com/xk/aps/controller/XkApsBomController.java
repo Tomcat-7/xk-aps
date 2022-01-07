@@ -1,6 +1,7 @@
 package com.xk.aps.controller;
 
 
+import com.xk.aps.model.dto.XkApsAttendanceDto;
 import com.xk.aps.service.IXkApsBomService;
 import com.xk.framework.common.APIResponse;
 import com.xk.framework.common.PageDto;
@@ -14,6 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.xk.aps.model.dto.XkApsBomDto;
 import com.xk.aps.model.entity.XkApsBomEntity;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -36,8 +41,25 @@ public class XkApsBomController {
             @ApiImplicitParam(value = "每页条目", name = "pageSize", required = true,dataType = "int" ,defaultValue = "10"),
     })
     public APIResponse<XkApsBomDto> page(PageQueryDto<XkApsBomEntity> pageDto) {
+        //System.out.println(pageDto.getSearchData());
+        String key = pageDto.getSearchData();
+        String searchData = "[{name:\"delFlag\",value:\""+0+"\"},{name:\"like_itemCode\",value:\""+key+"\"}]";
+
+        pageDto.setSearchData(searchData);
+        //System.out.println(searchData);
         PageDto<XkApsBomDto> pd = xkApsBomService.page(pageDto);
         return new APIResponse<XkApsBomDto>(pd);
+    }
+
+    /**
+     * 描述：获取Bom表所有数据
+     * @param
+     */
+    @ApiOperation(value = "获取所有Bom表数据", notes = "获取所有Bom表数据",httpMethod="GET")
+    @ApiImplicitParam(name = "list", value = "获取所有Bom表数据", required = true, dataType = "String")
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    public APIResponse<List<XkApsBomDto>> list() {
+        return new APIResponse<List<XkApsBomDto>>(xkApsBomService.listAll());
     }
 
     /**
@@ -57,7 +79,7 @@ public class XkApsBomController {
     */
     @ApiOperation(value = "保存一键生成单表模块信息", httpMethod = "POST", notes = "保存信息，注意保存时需要传递的参数")
     @ApiImplicitParam(name = "formData", value = "{table_annotation}信息", required = true, dataType = "XkApsBomDto")
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
     public APIResponse<XkApsBomDto> save(@RequestBody XkApsBomDto formData)  {
             if (null != formData) {
                 return new APIResponse<XkApsBomDto>(xkApsBomService.save(formData));
@@ -73,7 +95,7 @@ public class XkApsBomController {
     @ApiOperation(value = "删除单个一键生成单表模块信息", notes = "根据url的id来指定删除对象", httpMethod = "DELETE")
     @ApiImplicitParam(name = "id", value = "主键id", required = true, dataType = "String")
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public APIResponse<XkApsBomDto> remove(@PathVariable String id) {
+    public APIResponse<XkApsBomDto> remove(@PathVariable("id") String id) {
             xkApsBomService.remove(id);
         return new APIResponse<XkApsBomDto>(0, "数据删除成功");
     }
@@ -85,21 +107,21 @@ public class XkApsBomController {
     @ApiOperation(value = "删除多个一键生成单表模块信息", notes = "根据url的id来指定删除对象", httpMethod = "DELETE")
     @ApiImplicitParam(name = "ids", value = "id1,id2,id3....(多个主键，逗号分割)", required = true, dataType = "String")
     @RequestMapping(value = "/multiDel", method = RequestMethod.DELETE)
-    public APIResponse<XkApsBomDto> multiDel(String ids) {
+    public APIResponse<XkApsBomDto> multiDel(@RequestBody String ids) {
             xkApsBomService.removeMulti(ids);
         return new APIResponse<XkApsBomDto>(0, "数据删除成功");
      }
 
     /**
     * 描述：更新一键生成单表模块
-    * @param id 一键生成单表模块id
+    * @param
     */
     @ApiOperation(value = "更新一键生成单表模块数据", httpMethod = "PUT")
     @ApiImplicitParams({
     @ApiImplicitParam(required = true, name = "id", paramType = "path", dataType = "String", value = "id"),
     @ApiImplicitParam(name = "formData", value = "更新信息", required = true, dataType = "XkApsBomDto")})
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public APIResponse<XkApsBomDto> update(@PathVariable("id") String id,@RequestBody XkApsBomDto formData) throws Exception {
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public APIResponse<XkApsBomDto> update(@RequestBody XkApsBomDto formData) throws Exception {
         if (null != formData) {
             return new APIResponse<XkApsBomDto>(xkApsBomService.save(formData));
         }

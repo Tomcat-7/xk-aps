@@ -40,12 +40,12 @@ public class XkApsItemDto extends BaseDto{
     *备料方法(0:内制优先,1:采购优先)
     */
     @ApiModelProperty(value = "备料方法(0:内制优先,1:采购优先)",example = "0")
-    private Integer itemPreparation;
+    private String itemPreparation;
     /**
     *自动补充标志(0:是，1:否)
     */
     @ApiModelProperty(value = "自动补充标志(0:是，1:否)",example = "0")
-    private Integer itemSupplement;
+    private String itemSupplement;
     /**
     *制造批量(max)
     */
@@ -331,15 +331,6 @@ public class XkApsItemDto extends BaseDto{
     */
     @ApiModelProperty(value = "备注")
     private String itemNote;
-    /**
-    *
-    */
-    @ApiModelProperty(value = "")
-    private Date createTime;
-    /**
-    *
-    */
-    @ApiModelProperty(value = "")
-    private Date updateTime;
+
 
 }

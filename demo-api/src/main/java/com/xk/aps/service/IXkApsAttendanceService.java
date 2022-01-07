@@ -4,6 +4,10 @@ import com.xk.aps.model.dto.XkApsAttendanceDto;
 import com.xk.aps.model.entity.XkApsAttendanceEntity;
 import com.xk.framework.common.PageDto;
 import com.xk.framework.common.PageQueryDto;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -51,4 +55,10 @@ public interface IXkApsAttendanceService{
     */
     void remove(String id);
 
+    /**
+     * 获取表中所有数据
+     */
+    List<XkApsAttendanceDto> listAll(@RequestParam Map<String, Object> params);
+
+//    void deleteIds(List<String> ids);
 }

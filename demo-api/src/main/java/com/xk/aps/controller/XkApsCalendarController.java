@@ -36,8 +36,23 @@ public class XkApsCalendarController {
             @ApiImplicitParam(value = "每页条目", name = "pageSize", required = true,dataType = "int" ,defaultValue = "10"),
     })
     public APIResponse<XkApsCalendarDto> page(PageQueryDto<XkApsCalendarEntity> pageDto) {
+        String key = pageDto.getSearchData();
+        String searchData = "[{name:\"delFlag\",value:\""+0+"\"},{name:\"like_resourceCode\",value:\""+key+"\"}]";
+
+        pageDto.setSearchData(searchData);
         PageDto<XkApsCalendarDto> pd = xkApsCalendarService.page(pageDto);
         return new APIResponse<XkApsCalendarDto>(pd);
+    }
+
+    /**
+     * 描述：获取所有生产日历信息
+     * @param
+     */
+    @ApiOperation(value = "获取所有生产日历信息", notes = "获取所有生产日历信息",httpMethod="GET")
+    @ApiImplicitParam(name = "id", value = "主键ID", required = true, dataType = "String")
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    public APIResponse<XkApsCalendarDto> list() {
+        return new APIResponse<XkApsCalendarDto>(xkApsCalendarService.listAll());
     }
 
     /**
@@ -57,7 +72,7 @@ public class XkApsCalendarController {
     */
     @ApiOperation(value = "保存一键生成单表模块信息", httpMethod = "POST", notes = "保存信息，注意保存时需要传递的参数")
     @ApiImplicitParam(name = "formData", value = "{table_annotation}信息", required = true, dataType = "XkApsCalendarDto")
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
     public APIResponse<XkApsCalendarDto> save(@RequestBody XkApsCalendarDto formData)  {
             if (null != formData) {
                 return new APIResponse<XkApsCalendarDto>(xkApsCalendarService.save(formData));
@@ -73,7 +88,7 @@ public class XkApsCalendarController {
     @ApiOperation(value = "删除单个一键生成单表模块信息", notes = "根据url的id来指定删除对象", httpMethod = "DELETE")
     @ApiImplicitParam(name = "id", value = "主键id", required = true, dataType = "String")
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public APIResponse<XkApsCalendarDto> remove(@PathVariable String id) {
+    public APIResponse<XkApsCalendarDto> remove(@PathVariable("id") String id) {
             xkApsCalendarService.remove(id);
         return new APIResponse<XkApsCalendarDto>(0, "数据删除成功");
     }
@@ -85,21 +100,21 @@ public class XkApsCalendarController {
     @ApiOperation(value = "删除多个一键生成单表模块信息", notes = "根据url的id来指定删除对象", httpMethod = "DELETE")
     @ApiImplicitParam(name = "ids", value = "id1,id2,id3....(多个主键，逗号分割)", required = true, dataType = "String")
     @RequestMapping(value = "/multiDel", method = RequestMethod.DELETE)
-    public APIResponse<XkApsCalendarDto> multiDel(String ids) {
+    public APIResponse<XkApsCalendarDto> multiDel(@RequestBody String ids) {
             xkApsCalendarService.removeMulti(ids);
         return new APIResponse<XkApsCalendarDto>(0, "数据删除成功");
      }
 
     /**
     * 描述：更新一键生成单表模块
-    * @param id 一键生成单表模块id
+    * @param
     */
     @ApiOperation(value = "更新一键生成单表模块数据", httpMethod = "PUT")
     @ApiImplicitParams({
     @ApiImplicitParam(required = true, name = "id", paramType = "path", dataType = "String", value = "id"),
     @ApiImplicitParam(name = "formData", value = "更新信息", required = true, dataType = "XkApsCalendarDto")})
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public APIResponse<XkApsCalendarDto> update(@PathVariable("id") String id,@RequestBody XkApsCalendarDto formData) throws Exception {
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public APIResponse<XkApsCalendarDto> update(@RequestBody XkApsCalendarDto formData) throws Exception {
         if (null != formData) {
             return new APIResponse<XkApsCalendarDto>(xkApsCalendarService.save(formData));
         }

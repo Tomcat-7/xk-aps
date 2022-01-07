@@ -1,19 +1,22 @@
 package com.xk.aps.service.impl;
 
+import com.xk.aps.model.dto.XkApsBomDto;
+import com.xk.aps.model.entity.XkApsAttendanceEntity;
 import com.xk.aps.service.IXkApsBomService;
 import com.xk.framework.common.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.xk.aps.dao.XkApsBomRepository;
-import com.xk.aps.model.dto.XkApsBomDto;
 import com.xk.aps.model.entity.XkApsBomEntity;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
 * 描述：一键生成单表模块服务实现层
@@ -104,6 +107,30 @@ public class XkApsBomServiceImpl implements IXkApsBomService {
             logger.error("删除数据失败,{}",e);
             e.printStackTrace();
             throw new ServiceException("删除数据失败", CommonErrorCode.DELETE_ERROR);
+        }
+    }
+
+    /**
+     * 获取Bom表所有信息
+     * @return PageDto {@code<XkApsBomDto>}
+     */
+    //@Cacheable(value = {"Bom"}, key = "#root.method.name",sync = true)
+    @Override
+    public List<XkApsBomDto> listAll() {
+        try {
+            List<XkApsBomEntity> bomEntities = xkApsBomRepository.findAll();
+            if (bomEntities == null) {
+                return null;
+            }
+            List<XkApsBomDto> collect = bomEntities.stream().map((item) -> {
+                XkApsBomDto XkApsBomDto = BeanMapperUtils.map(item, XkApsBomDto.class);
+                return XkApsBomDto;
+            }).collect(Collectors.toList());
+            return collect;
+        } catch (Exception e) {
+            logger.error("查询所有数据失败,{}",e);
+            e.printStackTrace();
+            throw new ServiceException("查询所有数据失败", CommonErrorCode.SELECT_ERROR);
         }
     }
 

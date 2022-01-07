@@ -5,6 +5,8 @@ import com.xk.framework.common.PageQueryDto;
 import com.xk.aps.model.dto.XkApsResourceDto;
 import com.xk.aps.model.entity.XkApsResourceEntity;
 
+import java.util.List;
+
 
 /**
 * 描述：一键生成单表模块 服务实现层接口
@@ -51,4 +53,5 @@ public interface IXkApsResourceService{
     */
     void remove(String id);
 
+    List<XkApsResourceDto> listAll();
 }

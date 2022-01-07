@@ -65,7 +65,7 @@ public class XkApsBomEntity extends BaseEntity  {
     @Column(name = "before_time")
     private Long beforeTime;
     /**
-    *加工前需要的时间(分钟单位)
+    *加工需要的时间(分钟单位)
     */
     @Column(name = "manufacturing_time")
     private Long manufacturingTime;

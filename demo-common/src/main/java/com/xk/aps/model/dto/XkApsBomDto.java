@@ -62,7 +62,7 @@ public class XkApsBomDto extends BaseDto{
     @ApiModelProperty(value = "加工前需要等待时间(分钟单位)",example = "0")
     private Long beforeTime;
     /**
-    *加工前需要的时间(分钟单位)
+    *加工需要的时间(分钟单位)
     */
     @ApiModelProperty(value = "加工前需要的时间(分钟单位)",example = "0")
     private Long manufacturingTime;
@@ -111,15 +111,5 @@ public class XkApsBomDto extends BaseDto{
     */
     @ApiModelProperty(value = "备注")
     private String bomNote;
-    /**
-    *
-    */
-    @ApiModelProperty(value = "")
-    private Date createTime;
-    /**
-    *
-    */
-    @ApiModelProperty(value = "")
-    private Date updateTime;
 
 }

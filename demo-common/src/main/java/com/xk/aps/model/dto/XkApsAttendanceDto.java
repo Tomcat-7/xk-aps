@@ -36,15 +36,5 @@ public class XkApsAttendanceDto extends BaseDto{
     */
     @ApiModelProperty(value = "备注")
     private String attendanceNote;
-    /**
-    *
-    */
-    @ApiModelProperty(value = "")
-    private Date createTime;
-    /**
-    *
-    */
-    @ApiModelProperty(value = "")
-    private Date updateTime;
 
 }

@@ -51,15 +51,5 @@ public class XkApsOperationDto extends BaseDto{
     */
     @ApiModelProperty(value = "备注")
     private String operationNote;
-    /**
-    *
-    */
-    @ApiModelProperty(value = "")
-    private Date createTime;
-    /**
-    *
-    */
-    @ApiModelProperty(value = "")
-    private Date updateTime;
 
 }

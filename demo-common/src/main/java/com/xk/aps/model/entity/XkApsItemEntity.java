@@ -43,12 +43,12 @@ public class XkApsItemEntity extends BaseEntity  {
     *备料方法(0:内制优先,1:采购优先)
     */
     @Column(name = "item_preparation")
-    private Integer itemPreparation;
+    private String itemPreparation;
     /**
     *自动补充标志(0:是，1:否)
     */
     @Column(name = "item_supplement")
-    private Integer itemSupplement;
+    private String itemSupplement;
     /**
     *制造批量(max)
     */

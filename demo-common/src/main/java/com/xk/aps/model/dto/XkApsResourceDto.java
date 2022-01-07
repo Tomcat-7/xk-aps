@@ -131,15 +131,6 @@ public class XkApsResourceDto extends BaseDto{
     */
     @ApiModelProperty(value = "从此模板生成的资源")
     private String resourceSon;
-    /**
-    *
-    */
-    @ApiModelProperty(value = "")
-    private Date createTime;
-    /**
-    *
-    */
-    @ApiModelProperty(value = "")
-    private Date updateTime;
+
 
 }

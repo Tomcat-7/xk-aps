@@ -30,12 +30,12 @@ public class XkApsOrderDto extends BaseDto{
     *订单种类(0:销售，1:制造，2:采购)
     */
     @ApiModelProperty(value = "订单种类(0:销售，1:制造，2:采购)",example = "0")
-    private Integer orderCategory;
+    private String orderCategory;
     /**
     *订单区分(0:录入，1:补充)
     */
     @ApiModelProperty(value = "订单区分(0:录入，1:补充)",example = "0")
-    private Integer orderDistinguish;
+    private String orderDistinguish;
     /**
     *品目代码
     */
@@ -141,15 +141,5 @@ public class XkApsOrderDto extends BaseDto{
     */
     @ApiModelProperty(value = "分派标志(0:未分派，1:已分派)",example = "0")
     private Integer orderDispatchMark;
-    /**
-    *
-    */
-    @ApiModelProperty(value = "")
-    private Date createTime;
-    /**
-    *
-    */
-    @ApiModelProperty(value = "")
-    private Date updateTime;
 
 }

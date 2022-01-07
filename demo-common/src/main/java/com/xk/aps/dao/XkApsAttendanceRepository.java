@@ -12,5 +12,4 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 public interface XkApsAttendanceRepository extends JpaSpecificationExecutor<XkApsAttendanceEntity>, BaseRepository<XkApsAttendanceEntity, String>  {
 
 
-
 }

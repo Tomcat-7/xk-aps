@@ -33,12 +33,12 @@ public class XkApsOrderEntity extends BaseEntity  {
     *订单种类(0:销售，1:制造，2:采购)
     */
     @Column(name = "order_category")
-    private Integer orderCategory;
+    private String orderCategory;
     /**
     *订单区分(0:录入，1:补充)
     */
     @Column(name = "order_distinguish")
-    private Integer orderDistinguish;
+    private String orderDistinguish;
     /**
     *品目代码
     */

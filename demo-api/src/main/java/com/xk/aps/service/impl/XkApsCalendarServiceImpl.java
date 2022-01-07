@@ -9,12 +9,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.xk.aps.model.entity.XkApsCalendarEntity;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
 * 描述：一键生成单表模块服务实现层
@@ -105,6 +107,26 @@ public class XkApsCalendarServiceImpl implements IXkApsCalendarService {
             logger.error("删除数据失败,{}",e);
             e.printStackTrace();
             throw new ServiceException("删除数据失败", CommonErrorCode.DELETE_ERROR);
+        }
+    }
+
+    //@Cacheable(value = {"Calendar"}, key = "#root.method.name",sync = true)
+    @Override
+    public List<XkApsCalendarDto> listAll() {
+        try {
+            List<XkApsCalendarEntity> calendarEntities = xkApsCalendarRepository.findAll();
+            if (calendarEntities == null) {
+                return null;
+            }
+            List<XkApsCalendarDto> collect = calendarEntities.stream().map((item) -> {
+                XkApsCalendarDto xkApsCalendarDto = BeanMapperUtils.map(item, XkApsCalendarDto.class);
+                return xkApsCalendarDto;
+            }).collect(Collectors.toList());
+            return collect;
+        } catch (Exception e) {
+            logger.error("查询所有数据失败,{}",e);
+            e.printStackTrace();
+            throw new ServiceException("查询所有数据失败", CommonErrorCode.SELECT_ERROR);
         }
     }
 
