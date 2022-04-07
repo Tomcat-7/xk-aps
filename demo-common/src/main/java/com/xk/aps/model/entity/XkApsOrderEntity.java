@@ -54,6 +54,11 @@ public class XkApsOrderEntity extends BaseEntity  {
     */
     @Column(name = "order_date_delivery")
     private Date orderDateDelivery;
+//    /**
+//     *生产周期
+//     */
+//    @Column(name = "order_product_cycle")
+//    private Long orderProductionCycle;
     /**
     *订单数量
     */
@@ -80,30 +85,30 @@ public class XkApsOrderEntity extends BaseEntity  {
     @Column(name = "order_note")
     private String orderNote;
     /**
-    *规格1
+    *规格1 (作为订单序号字段)
     */
     @Column(name = "specification_one")
-    private String specificationOne;
+    private Integer specificationOne;
     /**
-    *规格2
+    *规格2 (作为生产周期字段)
     */
     @Column(name = "specification_two")
-    private String specificationTwo;
+    private Long specificationTwo;
     /**
-    *规格3
+    *规格3 (订单开工日期)
     */
     @Column(name = "specification_three")
-    private String specificationThree;
+    private Long specificationThree;
     /**
-    *规格4
+    *规格4 (加热炉序号)
     */
     @Column(name = "specification_four")
     private String specificationFour;
     /**
-    *数值规格1
+    *数值规格1 (物料质量)
     */
     @Column(name = "numerical_specification_one")
-    private String numericalSpecificationOne;
+    private Integer numericalSpecificationOne;
     /**
     *数值规格2
     */
@@ -118,7 +123,7 @@ public class XkApsOrderEntity extends BaseEntity  {
     *数值规格4
     */
     @Column(name = "numerical_specification_four")
-    private String numericalSpecificationFour;
+    private Date numericalSpecificationFour;
     /**
     *交货提前期
     */
@@ -135,14 +140,14 @@ public class XkApsOrderEntity extends BaseEntity  {
     @Column(name = "end_time")
     private Date endTime;
     /**
-    *订单状态(0:未指定1:开始生产2:结束)
+    *订单状态(未指定 开始生产 结束)
     */
     @Column(name = "order_status")
-    private Integer orderStatus;
+    private String orderStatus;
     /**
-    *分派标志(0:未分派，1:已分派)
+    *分派标志(未分派,已分派)
     */
     @Column(name = "order_dispatch_mark")
-    private Integer orderDispatchMark;
+    private String orderDispatchMark;
 
 }

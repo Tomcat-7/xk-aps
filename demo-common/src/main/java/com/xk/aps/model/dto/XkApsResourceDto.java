@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.Comparator;
 import java.util.Date;
 
 /**
@@ -14,7 +15,7 @@ import java.util.Date;
 */
 @Data
 @ApiModel(description = "一键生成单表模块DTO")
-public class XkApsResourceDto extends BaseDto{
+public class XkApsResourceDto extends BaseDto implements Comparable<XkApsResourceDto> {
 
     /**
     *项目工程
@@ -47,15 +48,15 @@ public class XkApsResourceDto extends BaseDto{
     @ApiModelProperty(value = "资源种类")
     private String resourceCategory;
     /**
-    *资源量制约
+    *资源量制约 (额定装炉质量)
     */
     @ApiModelProperty(value = "资源量制约")
-    private String resourceRestriction;
+    private Integer resourceRestriction;
     /**
     *资源顺序
     */
     @ApiModelProperty(value = "资源顺序")
-    private String resourceSort;
+    private Integer resourceSort;
     /**
     *备注
     */
@@ -133,4 +134,8 @@ public class XkApsResourceDto extends BaseDto{
     private String resourceSon;
 
 
+    @Override
+    public int compareTo(XkApsResourceDto o) {
+        return o.getResourceRestriction().compareTo(this.getResourceRestriction());
+    }
 }

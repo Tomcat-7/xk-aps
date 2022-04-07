@@ -191,6 +191,7 @@ public class XkApsAttendanceServiceImpl implements IXkApsAttendanceService {
     * @param pageDto 分页的数据
     * @return PageDto {@code<XkApsAttendanceDto>}
     */
+    //@Cacheable(value = {"Attendance"}, key = "#root.method.name",sync = true)
     @Override
     @Transactional(readOnly = true)
     public PageDto<XkApsAttendanceDto> page(PageQueryDto<XkApsAttendanceEntity> pageDto) {

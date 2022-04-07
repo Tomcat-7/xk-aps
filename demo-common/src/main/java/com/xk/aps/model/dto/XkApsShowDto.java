@@ -14,7 +14,7 @@ import java.util.Date;
 */
 @Data
 @ApiModel(description = "一键生成单表模块DTO")
-public class XkApsShowDto extends BaseDto{
+public class XkApsShowDto extends BaseDto implements Comparable<XkApsShowDto>{
 
     /**
     *项目工程
@@ -35,7 +35,7 @@ public class XkApsShowDto extends BaseDto{
     *资源名称
     */
     @ApiModelProperty(value = "资源名称",example = "0")
-    private Integer resourceName;
+    private String resourceName;
     /**
     *订单数量
     */
@@ -60,16 +60,30 @@ public class XkApsShowDto extends BaseDto{
     *订单品目代码
     */
     @ApiModelProperty(value = "订单品目代码")
-    private String showWork;
+    private String itemCode;
     /**
     *该资源生产品目代码
     */
     @ApiModelProperty(value = "该资源生产品目代码")
-    private String itemCode;
+    private String showWork;
     /**
     *备注
     */
     @ApiModelProperty(value = "备注")
     private String bomNote;
+    /**
+     *时间长度
+     */
+    @ApiModelProperty(value = "时间长度")
+    private Double timeLength;
+    /**
+     *序号
+     */
+    @ApiModelProperty(value = "序号")
+    private int sort;
 
+    @Override
+    public int compareTo(XkApsShowDto o) {
+        return this.getStartTime().compareTo(o.getStartTime());
+    }
 }

@@ -54,4 +54,6 @@ public interface IXkApsItemService{
     void remove(String id);
 
    List<XkApsItemDto> listAll();
+
+   String getObjectName(String objectCode);
 }

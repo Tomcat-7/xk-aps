@@ -1,5 +1,6 @@
 package com.xk.aps.service;
 
+import com.xk.aps.model.dto.XkApsMatlabInDto;
 import com.xk.aps.model.entity.XkApsOrderEntity;
 import com.xk.framework.common.PageDto;
 import com.xk.framework.common.PageQueryDto;
@@ -54,4 +55,6 @@ public interface IXkApsOrderService{
     void remove(String id);
 
     List<XkApsOrderDto> listAll();
+
+    List<XkApsOrderDto> schedule(String ids);
 }

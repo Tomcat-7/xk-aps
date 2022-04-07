@@ -58,22 +58,22 @@ public class XkApsBomEntity extends BaseEntity  {
     *先行工序编号
     */
     @Column(name = "before_code")
-    private String beforeCode;
+    private Integer beforeCode;
     /**
     *加工前需要等待时间(分钟单位)
     */
     @Column(name = "before_time")
-    private Long beforeTime;
+    private Double beforeTime;
     /**
     *加工需要的时间(分钟单位)
     */
     @Column(name = "manufacturing_time")
-    private Long manufacturingTime;
+    private Double manufacturingTime;
     /**
     *加工后需要等待时间(分钟单位)
     */
     @Column(name = "after_time")
-    private Long afterTime;
+    private Double afterTime;
     /**
     *接续方法(默认为ES)
     */

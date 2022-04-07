@@ -1,7 +1,9 @@
 package com.xk.aps.controller;
 
 
+import com.xk.aps.model.dto.XkApsMatlabInDto;
 import com.xk.aps.model.entity.XkApsOrderEntity;
+import com.xk.aps.service.IXkApsShowService;
 import com.xk.framework.common.APIResponse;
 import com.xk.framework.common.PageDto;
 import com.xk.framework.common.PageQueryDto;
@@ -31,6 +33,9 @@ public class XkApsOrderController {
     @Autowired
     private IXkApsOrderService xkApsOrderService;
 
+    @Autowired
+    private IXkApsShowService xkApsShowService;
+
     @ApiOperation(value = "分页获取一键生成单表模块", httpMethod = "GET", notes = "分页获取数据，注意分页参数")
     @RequestMapping(value = "/", method = {RequestMethod.GET})
     @ApiImplicitParams({
@@ -38,12 +43,20 @@ public class XkApsOrderController {
             @ApiImplicitParam(value = "每页条目", name = "pageSize", required = true,dataType = "int" ,defaultValue = "10"),
     })
     public APIResponse<XkApsOrderDto> page(PageQueryDto<XkApsOrderEntity> pageDto) {
-        String key = pageDto.getSearchData();
-        String searchData = "[{name:\"delFlag\",value:\""+0+"\"},{name:\"like_orderCode\",value:\""+key+"\"}]";
-
-        pageDto.setSearchData(searchData);
         PageDto<XkApsOrderDto> pd = xkApsOrderService.page(pageDto);
         return new APIResponse<XkApsOrderDto>(pd);
+    }
+
+    /**
+     * 对订单排程
+     */
+    @ApiOperation(value = "获取详细信息", notes = "根据url的id来获取详细信息",httpMethod="POST")
+    @ApiImplicitParam(name = "id", value = "主键ID", required = true, dataType = "String")
+    @RequestMapping(value = "/schedule", method = RequestMethod.POST)
+    public APIResponse<List<XkApsOrderDto>> schedule(String ids) {
+        System.out.println(ids);
+        List<XkApsOrderDto> schedule = xkApsOrderService.schedule(ids);
+        return new APIResponse<List<XkApsOrderDto>>(schedule);
     }
 
     /**
@@ -101,7 +114,7 @@ public class XkApsOrderController {
     @ApiOperation(value = "删除多个一键生成单表模块信息", notes = "根据url的id来指定删除对象", httpMethod = "DELETE")
     @ApiImplicitParam(name = "ids", value = "id1,id2,id3....(多个主键，逗号分割)", required = true, dataType = "String")
     @RequestMapping(value = "/multiDel", method = RequestMethod.DELETE)
-    public APIResponse<XkApsOrderDto> multiDel(@RequestBody String ids) {
+    public APIResponse<XkApsOrderDto> multiDel(String ids) {
             xkApsOrderService.removeMulti(ids);
         return new APIResponse<XkApsOrderDto>(0, "数据删除成功");
      }

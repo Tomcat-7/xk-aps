@@ -1,6 +1,7 @@
 package com.xk.aps.controller;
 
 
+import com.xk.aps.model.dto.XkApsGanttDto;
 import com.xk.aps.model.dto.XkApsShowDto;
 import com.xk.framework.common.APIResponse;
 import com.xk.framework.common.PageDto;
@@ -58,6 +59,26 @@ public class XkApsShowController {
     }
 
     /**
+     * 描述：获取订单甘特图所有信息
+     * @param
+     */
+    @ApiOperation(value = "获取订单甘特图所有信息", notes = "",httpMethod="GET")
+    @RequestMapping(value = "/order/gantt", method = RequestMethod.GET)
+    public APIResponse<List<XkApsGanttDto>> orderGanttList() {
+        return new APIResponse<List<XkApsGanttDto>>(xkApsShowService.orderGanttList());
+    }
+
+    /**
+     * 描述：获取资源甘特图所有信息
+     * @param
+     */
+    @ApiOperation(value = "获取资源甘特图所有信息", notes = "",httpMethod="GET")
+    @RequestMapping(value = "/resource/gantt", method = RequestMethod.GET)
+    public APIResponse<List<XkApsGanttDto>> resourceGanttList() {
+        return new APIResponse<List<XkApsGanttDto>>(xkApsShowService.resourceGanttList());
+    }
+
+    /**
     * 描述：根据Id查询
     * @param id  一键生成单表模块id
     */
@@ -102,7 +123,7 @@ public class XkApsShowController {
     @ApiOperation(value = "删除多个一键生成单表模块信息", notes = "根据url的id来指定删除对象", httpMethod = "DELETE")
     @ApiImplicitParam(name = "ids", value = "id1,id2,id3....(多个主键，逗号分割)", required = true, dataType = "String")
     @RequestMapping(value = "/multiDel", method = RequestMethod.DELETE)
-    public APIResponse<XkApsShowDto> multiDel(@RequestBody String ids) {
+    public APIResponse<XkApsShowDto> multiDel(String ids) {
             xkApsShowService.removeMulti(ids);
         return new APIResponse<XkApsShowDto>(0, "数据删除成功");
      }

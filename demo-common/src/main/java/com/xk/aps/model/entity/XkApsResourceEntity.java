@@ -50,15 +50,15 @@ public class XkApsResourceEntity extends BaseEntity  {
     @Column(name = "resource_category")
     private String resourceCategory;
     /**
-    *资源量制约
+    *资源量制约 (额定装炉质量)
     */
     @Column(name = "resource_restriction")
-    private String resourceRestriction;
+    private Integer resourceRestriction;
     /**
     *资源顺序
     */
     @Column(name = "resource_sort")
-    private String resourceSort;
+    private Integer resourceSort;
     /**
     *备注
     */

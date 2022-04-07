@@ -1,24 +1,30 @@
 package com.xk.aps.service.impl;
 
 
+import com.xk.aps.dao.XkApsBomRepository;
 import com.xk.aps.dao.XkApsShowRepository;
-import com.xk.aps.model.dto.XkApsResourceDto;
-import com.xk.aps.model.dto.XkApsShowDto;
-import com.xk.aps.model.entity.XkApsResourceEntity;
+import com.xk.aps.model.dto.*;
+import com.xk.aps.model.entity.XkApsBomEntity;
+import com.xk.aps.service.IXkApsItemService;
 import com.xk.framework.common.*;
 
+import com.xk.framework.jpa.specification.SimpleSpecificationBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.xk.aps.model.entity.XkApsShowEntity;
 import com.xk.aps.service.IXkApsShowService;
 
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 /**
@@ -32,6 +38,14 @@ public class XkApsShowServiceImpl implements IXkApsShowService {
     @Autowired
     private XkApsShowRepository xkApsShowRepository;
 
+    @Autowired
+    private XkApsBomRepository xkApsBomRepository;
+
+    @Autowired
+    private IXkApsItemService xkApsItemService;
+
+    @Autowired
+    StringRedisTemplate stringRedisTemplate;
 
     /**
     * 保存
@@ -135,6 +149,197 @@ public class XkApsShowServiceImpl implements IXkApsShowService {
         }
     }
 
+    @Override
+    public void handlerScheduleData(List<XkApsMatlabInDto> schedule) {
+
+        //TODO 排程后的逻辑处理
+        if(schedule !=null && schedule.size()>0){
+            List<XkApsShowDto> showDtoList = new ArrayList<>();
+            //原子计数器
+            AtomicInteger sort = new AtomicInteger();
+            //对订单遍历
+            schedule.stream().map((xkApsMatlabInDto) -> {
+                //获取订单最早开始时间
+                Date mostEarlyTime = xkApsMatlabInDto.getMostEarlyTime();
+                //根据订单生产的产品代码查出该产品的生产BOM集合
+                List<XkApsBomEntity> bomByItemCode = this.getBomByItemCode(xkApsMatlabInDto.getItemCode());
+                //循环遍历bom表中生产该品目的所有数据
+                for(XkApsBomEntity bomEntity:bomByItemCode){
+                    //判断该BOM表数据是否是加工操作
+                    if (bomEntity.getInstructionCode() == "M") {
+                        //如果是加工操作，将这天BOM表的数据写入showDto中，作为一条资源工作时间信息
+                        XkApsShowDto xkApsShowDto = new XkApsShowDto();
+                        Double beforeTime = bomEntity.getBeforeTime();
+                        Double manufacturingTime = bomEntity.getManufacturingTime();
+                        Double afterTime = bomEntity.getAfterTime();
+                        double theResourceManufactureLongTime = beforeTime + manufacturingTime + afterTime;
+                        xkApsShowDto.setTimeLength(theResourceManufactureLongTime);
+                        xkApsShowDto.setResourceCode(bomEntity.getObjectCode());
+                        String objectName = xkApsItemService.getObjectName(bomEntity.getObjectCode());
+                        if (!StringUtils.isEmpty(objectName)) {
+                            xkApsShowDto.setResourceName(objectName);
+                        }
+                        BeanUtils.copyProperties(xkApsMatlabInDto, xkApsShowDto);
+                        xkApsShowDto.setStartTime(mostEarlyTime);
+                        xkApsShowDto.setShowWork(bomEntity.getItemCode());
+                        xkApsShowDto.setSort(sort.get());
+                        showDtoList.add(xkApsShowDto);
+                        sort.getAndIncrement();
+                    }
+                }
+                return null;
+            });
+            //将得到的showList数组处理，此时数组中每个元素只有基本信息和工作时长,包括最早开始时间，订单排列序号
+            //如 第一个要生产的订单品目所需要的所有资源 都有加工序号0
+            //TODO 对得到的初步结果集合 showDtoList 处理，将集合按订单代码和资源代码分别分类，并给集合中每个数据加上开始时间和结束时间
+        }
+    }
+
+    /**
+     * 订单gantt图数据
+     * @return
+     */
+    @Override
+    public List<XkApsGanttDto> orderGanttList() {
+        List<XkApsGanttDto> ganttDtoList=new ArrayList<>();
+        //查出结果表所有数据 （这里要注意，查询的结果包含已经逻辑删除的数据）
+        List<XkApsShowEntity> showEntities = xkApsShowRepository.findAll();
+        //将所有的开始时间和结束时间全部放入一个时间数组，得到最大和最小值作为甘特图的时间启示和结束时间
+        List<Date> timeLine = new ArrayList<>();
+        //对查询到的结果通过订单编号分类放入Map数组中
+        if(showEntities.size()>0 && showEntities != null){
+            Map<String, List<XkApsShowEntity>> map = showEntities.stream().collect(Collectors.groupingBy(XkApsShowEntity::getOrderCode));
+            //遍历Map数组，将数据中的数组组装放入Gantt数据数组中
+            for (Map.Entry<String, List<XkApsShowEntity>> entry : map.entrySet()) {
+                String mapKey = entry.getKey();
+                List<XkApsShowEntity> mapValue = entry.getValue();
+
+                XkApsGanttDto xkApsGanttDto = new XkApsGanttDto();
+                List<XkApsGanttItemDto> xkApsGanttItemDtos = new ArrayList<>();
+
+                xkApsGanttDto.setId(mapKey);
+                xkApsGanttDto.setName(mapKey);
+
+                //***********************************
+                String dark ="rgb(247, 167, 71,0.8)";
+                String light ="rgb(247, 167, 71,0.1)";
+                XkApsGanttDto.ColorPair colorPair = new XkApsGanttDto.ColorPair();
+                colorPair.setDark(dark);
+                colorPair.setLight(light);
+                xkApsGanttDto.setColorPair(colorPair);
+                //***********************************
+
+                if(mapValue.size()>0 && mapValue != null){
+                    mapValue.stream().forEach((item)->{
+                        XkApsGanttItemDto xkApsGanttItemDto = new XkApsGanttItemDto();
+                        BeanUtils.copyProperties(item,xkApsGanttItemDto);
+                        xkApsGanttItemDto.setStart(item.getStartTime());
+                        xkApsGanttItemDto.setEnd(item.getEndTime());
+                        xkApsGanttItemDtos.add(xkApsGanttItemDto);
+                        timeLine.add(item.getStartTime());
+                        timeLine.add(item.getEndTime());
+                    });
+                    if(timeLine.size()>0 && timeLine != null){
+                        xkApsGanttDto.setStartTime(Collections.min(timeLine));
+                        xkApsGanttDto.setEndTime(Collections.max(timeLine));
+                    }
+                    Collections.sort(xkApsGanttItemDtos);
+                    xkApsGanttDto.setGtArray(xkApsGanttItemDtos);
+                }
+                ganttDtoList.add(xkApsGanttDto);
+            }
+        }
+
+        for(int i=1;i<ganttDtoList.size();i++){
+            if(ganttDtoList.get(0).getStartTime().getTime() > ganttDtoList.get(i).getStartTime().getTime()){
+                ganttDtoList.get(0).setStartTime(ganttDtoList.get(i).getStartTime());
+            }
+            if(ganttDtoList.get(0).getEndTime().getTime() < ganttDtoList.get(i).getEndTime().getTime()){
+                ganttDtoList.get(0).setEndTime(ganttDtoList.get(i).getEndTime());
+            }
+        }
+        return ganttDtoList;
+    }
+
+    /**
+     * 资源gantt图数据
+     * @return
+     */
+    @Override
+    public List<XkApsGanttDto> resourceGanttList() {
+        List<XkApsGanttDto> ganttDtoList=new ArrayList<>();
+        //查出结果表所有数据 （这里要注意，查询的结果包含已经逻辑删除的数据）
+        List<XkApsShowEntity> showEntities = xkApsShowRepository.findAll();
+
+        //将所有的开始时间和结束时间全部放入一个时间数组，得到最大和最小值作为甘特图的时间启示和结束时间
+        List<Date> timeLine = new ArrayList<>();
+        //对查询到的结果通过资源代码分类放入Map数组中
+        if(showEntities.size()>0 && showEntities != null){
+            Map<String, List<XkApsShowEntity>> map = showEntities.stream().collect(Collectors.groupingBy(XkApsShowEntity::getResourceCode));
+            //遍历Map数组，将数据中的数组组装放入Gantt数据数组中
+            for (Map.Entry<String, List<XkApsShowEntity>> entry : map.entrySet()) {
+                String mapKey = entry.getKey();
+                List<XkApsShowEntity> mapValue = entry.getValue();
+
+                XkApsGanttDto xkApsGanttDto = new XkApsGanttDto();
+                List<XkApsGanttItemDto> xkApsGanttItemDtos = new ArrayList<>();
+
+                xkApsGanttDto.setId(mapKey);
+
+                //***********************************
+//                String dark ="rgb(247, 167, 71,0.8)";
+//                String light ="rgb(247, 167, 71,0.1)";
+                String dark ="rgb(255, 255, 0,0.8)";
+                String light ="rgb(255, 255, 0,0.1)";
+                XkApsGanttDto.ColorPair colorPair = new XkApsGanttDto.ColorPair();
+                colorPair.setDark(dark);
+                colorPair.setLight(light);
+                xkApsGanttDto.setColorPair(colorPair);
+                //***********************************
+
+                if(mapValue.size()>0 && mapValue != null){
+                    mapValue.stream().forEach((item)->{
+                        XkApsGanttItemDto xkApsGanttItemDto = new XkApsGanttItemDto();
+                        BeanUtils.copyProperties(item,xkApsGanttItemDto);
+                        xkApsGanttItemDto.setStart(item.getStartTime());
+                        xkApsGanttItemDto.setEnd(item.getEndTime());
+                        xkApsGanttItemDtos.add(xkApsGanttItemDto);
+                        timeLine.add(item.getStartTime());
+                        timeLine.add(item.getEndTime());
+                        xkApsGanttDto.setName(item.getResourceName());
+                    });
+
+
+                    if(timeLine.size()>0 && timeLine != null){
+                        xkApsGanttDto.setStartTime(Collections.min(timeLine));
+                        xkApsGanttDto.setEndTime(Collections.max(timeLine));
+                    }
+                    Collections.sort(xkApsGanttItemDtos);
+                    xkApsGanttDto.setGtArray(xkApsGanttItemDtos);
+                }
+                ganttDtoList.add(xkApsGanttDto);
+
+            }
+        }
+
+        for(int i=1;i<ganttDtoList.size();i++){
+            if(ganttDtoList.get(0).getStartTime().getTime() > ganttDtoList.get(i).getStartTime().getTime()){
+                ganttDtoList.get(0).setStartTime(ganttDtoList.get(i).getStartTime());
+            }
+            if(ganttDtoList.get(0).getEndTime().getTime() < ganttDtoList.get(i).getEndTime().getTime()){
+                ganttDtoList.get(0).setEndTime(ganttDtoList.get(i).getEndTime());
+            }
+        }
+        return ganttDtoList;
+    }
+
+    public List<XkApsBomEntity> getBomByItemCode(String itemCode){
+        SimpleSpecificationBuilder<XkApsBomEntity> ssb1 = new SimpleSpecificationBuilder<XkApsBomEntity>();
+        ssb1.add("item_code",Constants.OPER_EQ,itemCode);;
+        List<XkApsBomEntity> xkApsBomEntityList=xkApsBomRepository.findAll(ssb1.generateSpecification());
+        return xkApsBomEntityList;
+    }
+
     /**
     * 分页获取一键生成单表模块信息
     *
@@ -143,7 +348,9 @@ public class XkApsShowServiceImpl implements IXkApsShowService {
     */
     @Override
     @Transactional(readOnly = true)
-    public PageDto<XkApsShowDto> page(PageQueryDto<XkApsShowEntity> pageDto) {
+    public PageDto<XkApsShowDto>  page(PageQueryDto<XkApsShowEntity> pageDto) {
+        pageDto.setSortField("createtime");
+        pageDto.setSortOrder("DESC");
         try {
             Page<XkApsShowEntity> pageData = xkApsShowRepository.queryPage(pageDto);
             if (pageData == null || pageData.getContent() == null || pageData.getContent().size() <= 0) {

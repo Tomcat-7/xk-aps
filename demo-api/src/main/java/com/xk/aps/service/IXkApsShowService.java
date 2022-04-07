@@ -1,5 +1,7 @@
 package com.xk.aps.service;
 
+import com.xk.aps.model.dto.XkApsGanttDto;
+import com.xk.aps.model.dto.XkApsMatlabInDto;
 import com.xk.aps.model.dto.XkApsShowDto;
 import com.xk.framework.common.PageDto;
 import com.xk.framework.common.PageQueryDto;
@@ -54,4 +56,10 @@ public interface IXkApsShowService{
     void remove(String id);
 
     List<XkApsShowDto> listAll();
+
+    void handlerScheduleData(List<XkApsMatlabInDto> schedule);
+
+    List<XkApsGanttDto> orderGanttList();
+
+    List<XkApsGanttDto> resourceGanttList();
 }

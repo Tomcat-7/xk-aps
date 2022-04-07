@@ -11,6 +11,4 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 */
 public interface XkApsItemRepository extends JpaSpecificationExecutor<XkApsItemEntity>, BaseRepository<XkApsItemEntity, String>  {
 
-
-
 }

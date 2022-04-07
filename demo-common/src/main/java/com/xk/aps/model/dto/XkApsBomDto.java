@@ -1,10 +1,12 @@
 package com.xk.aps.model.dto;
 
+import com.baomidou.mybatisplus.core.conditions.interfaces.Compare;
 import com.xk.framework.jpa.reposiotry.base.BaseDto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.Comparator;
 import java.util.Date;
 
 /**
@@ -14,7 +16,7 @@ import java.util.Date;
 */
 @Data
 @ApiModel(description = "一键生成单表模块DTO")
-public class XkApsBomDto extends BaseDto{
+public class XkApsBomDto extends BaseDto implements Comparable<XkApsBomDto> {
 
     /**
     *项目工程
@@ -55,22 +57,22 @@ public class XkApsBomDto extends BaseDto{
     *先行工序编号
     */
     @ApiModelProperty(value = "先行工序编号")
-    private String beforeCode;
+    private Integer beforeCode;
     /**
     *加工前需要等待时间(分钟单位)
     */
     @ApiModelProperty(value = "加工前需要等待时间(分钟单位)",example = "0")
-    private Long beforeTime;
+    private Double beforeTime;
     /**
     *加工需要的时间(分钟单位)
     */
     @ApiModelProperty(value = "加工前需要的时间(分钟单位)",example = "0")
-    private Long manufacturingTime;
+    private Double manufacturingTime;
     /**
     *加工后需要等待时间(分钟单位)
     */
     @ApiModelProperty(value = "加工后需要等待时间(分钟单位)",example = "0")
-    private Long afterTime;
+    private Double afterTime;
     /**
     *接续方法(默认为ES)
     */
@@ -112,4 +114,10 @@ public class XkApsBomDto extends BaseDto{
     @ApiModelProperty(value = "备注")
     private String bomNote;
 
+    @Override
+    public int compareTo(XkApsBomDto o) {
+        //按该字段从小到大顺序排列
+        return this.getBeforeCode().compareTo(o.getBeforeCode());
+        //return o.getBeforeCode().compareTo(this.getBeforeCode());
+    }
 }

@@ -4,8 +4,10 @@ import com.xk.aps.model.dto.XkApsCalendarDto;
 import com.xk.aps.model.dto.XkApsItemDto;
 import com.xk.aps.model.entity.XkApsCalendarEntity;
 import com.xk.aps.service.IXkApsItemService;
+import com.xk.common.core.user.model.entity.CapUserEntity;
 import com.xk.framework.common.*;
 
+import com.xk.framework.jpa.specification.SimpleSpecificationBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.xk.aps.dao.XkApsItemRepository;
 import com.xk.aps.model.entity.XkApsItemEntity;
 
+import java.lang.annotation.ElementType;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -160,7 +164,28 @@ public class XkApsItemServiceImpl implements IXkApsItemService {
         }
     }
 
-
+    /**
+     * 根据品目代码获得品目名称
+     * @param objectCode
+     * @return
+     */
+    @Override
+    public String getObjectName(String objectCode){
+        try {
+            SimpleSpecificationBuilder<XkApsItemEntity> ssb1 = new SimpleSpecificationBuilder<XkApsItemEntity>();
+            ssb1.add("item_code",Constants.OPER_EQ,objectCode);;
+            List<XkApsItemEntity> itemEntities=xkApsItemRepository.findAll(ssb1.generateSpecification());
+            if( itemEntities!=null && itemEntities.size()>0){
+                return itemEntities.get(0).getItemName();
+            }else {
+                return null;
+            }
+        } catch (Exception e) {
+            logger.error("查询数据失败,{}",e);
+            e.printStackTrace();
+            throw new ServiceException("查询数据失败", CommonErrorCode.SELECT_ERROR);
+        }
+    };
 
 }
 

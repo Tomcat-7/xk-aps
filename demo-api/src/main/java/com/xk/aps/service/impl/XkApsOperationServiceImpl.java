@@ -49,6 +49,12 @@ public class XkApsOperationServiceImpl implements IXkApsOperationService {
             }
 
             BeanMapperUtils.map(formData, xkApsOperationEntity);
+
+            if(xkApsOperationEntity.getOperationSort() == null){
+                List<XkApsOperationEntity> all = xkApsOperationRepository.findAll();
+                xkApsOperationEntity.setOperationSort(all.size() + 1);
+            }
+
             // 保存
             return BeanMapperUtils.map(xkApsOperationRepository.saveAndFlush(xkApsOperationEntity), XkApsOperationDto.class);
         } catch (Exception e) {

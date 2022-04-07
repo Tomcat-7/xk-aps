@@ -5,6 +5,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -14,7 +16,7 @@ import java.util.Date;
 */
 @Data
 @ApiModel(description = "一键生成单表模块DTO")
-public class XkApsOrderDto extends BaseDto{
+public class XkApsOrderDto extends BaseDto implements Comparable<XkApsOrderDto>{
 
     /**
     *项目工程
@@ -51,6 +53,21 @@ public class XkApsOrderDto extends BaseDto{
     */
     @ApiModelProperty(value = "交货期")
     private Date orderDateDelivery;
+//    /**
+//     *生产周期
+//     */
+//    @ApiModelProperty(value = "生产周期")
+//    private Long orderProductionCycle;
+    /**
+     * 订单序号
+     */
+    @ApiModelProperty(value = "订单序号")
+    private Integer sortCode;
+    /**
+     * 订单计算序号
+     */
+    @ApiModelProperty(value = "订单计算序号")
+    private BigDecimal sortRatCode;
     /**
     *订单数量
     */
@@ -77,30 +94,30 @@ public class XkApsOrderDto extends BaseDto{
     @ApiModelProperty(value = "备注")
     private String orderNote;
     /**
-    *规格1
+    *规格1 (订单序号)
     */
     @ApiModelProperty(value = "规格1")
-    private String specificationOne;
+    private Integer specificationOne;
     /**
-    *规格2
+    *规格2  (生产周期)
     */
     @ApiModelProperty(value = "规格2")
-    private String specificationTwo;
+    private Long specificationTwo;
     /**
-    *规格3
+    *规格3 (订单开工日期)
     */
     @ApiModelProperty(value = "规格3")
-    private String specificationThree;
+    private Long specificationThree;
     /**
-    *规格4
+    *规格4 (加热炉序号)
     */
     @ApiModelProperty(value = "规格4")
     private String specificationFour;
     /**
-    *数值规格1
+    *数值规格1 (物料质量)
     */
     @ApiModelProperty(value = "数值规格1")
-    private String numericalSpecificationOne;
+    private Integer numericalSpecificationOne;
     /**
     *数值规格2
     */
@@ -115,7 +132,7 @@ public class XkApsOrderDto extends BaseDto{
     *数值规格4
     */
     @ApiModelProperty(value = "数值规格4")
-    private String numericalSpecificationFour;
+    private Date numericalSpecificationFour;
     /**
     *交货提前期
     */
@@ -132,14 +149,26 @@ public class XkApsOrderDto extends BaseDto{
     @ApiModelProperty(value = "结束时间(排程后生成)")
     private Date endTime;
     /**
-    *订单状态(0:未指定1:开始生产2:结束)
+    *订单状态(未指定,开始生产,结束)
     */
-    @ApiModelProperty(value = "订单状态(0:未指定1:开始生产2:结束)",example = "0")
-    private Integer orderStatus;
+    @ApiModelProperty(value = "订单状态(未指定,开始生产,结束)",example = "未指定")
+    private String orderStatus;
     /**
-    *分派标志(0:未分派，1:已分派)
+    *分派标志(未分派，已分派)
     */
-    @ApiModelProperty(value = "分派标志(0:未分派，1:已分派)",example = "0")
-    private Integer orderDispatchMark;
+    @ApiModelProperty(value = "分派标志(未分派，已分派)",example = "未分派")
+    private String orderDispatchMark;
 
+    /**
+     * compareTo：
+     *  如果指定的数与参数相等返回0
+     *  如果指定的数小于参数返回 -1
+     *  如果指定的数大于参数返回 1
+     * @param o
+     * @return
+     */
+    @Override
+    public int compareTo(XkApsOrderDto o) {
+        return o.getSortRatCode().compareTo(this.getSortRatCode());
+    }
 }

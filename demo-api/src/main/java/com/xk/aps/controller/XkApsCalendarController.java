@@ -100,7 +100,7 @@ public class XkApsCalendarController {
     @ApiOperation(value = "删除多个一键生成单表模块信息", notes = "根据url的id来指定删除对象", httpMethod = "DELETE")
     @ApiImplicitParam(name = "ids", value = "id1,id2,id3....(多个主键，逗号分割)", required = true, dataType = "String")
     @RequestMapping(value = "/multiDel", method = RequestMethod.DELETE)
-    public APIResponse<XkApsCalendarDto> multiDel(@RequestBody String ids) {
+    public APIResponse<XkApsCalendarDto> multiDel(String ids) {
             xkApsCalendarService.removeMulti(ids);
         return new APIResponse<XkApsCalendarDto>(0, "数据删除成功");
      }

@@ -1,6 +1,7 @@
 package com.xk.aps.model.entity;
 
 import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.xk.aps.model.dto.XkApsShowDto;
 import com.xk.framework.jpa.reposiotry.base.BaseEntity;
 import lombok.Data;
 
@@ -17,7 +18,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name="xk_aps_show")
-public class XkApsShowEntity extends BaseEntity  {
+public class XkApsShowEntity extends BaseEntity  implements Comparable<XkApsShowDto>{
 
     /**
     *项目工程
@@ -38,7 +39,7 @@ public class XkApsShowEntity extends BaseEntity  {
     *资源名称
     */
     @Column(name = "resource_name")
-    private Integer resourceName;
+    private String resourceName;
     /**
     *订单数量
     */
@@ -63,16 +64,21 @@ public class XkApsShowEntity extends BaseEntity  {
     *订单品目代码
     */
     @Column(name = "show_work")
-    private String showWork;
+    private String itemCode;
     /**
     *该资源生产品目代码
     */
     @Column(name = "item_code")
-    private String itemCode;
+    private String showWork;
     /**
     *备注
     */
     @Column(name = "bom_note")
     private String bomNote;
 
+
+    @Override
+    public int compareTo(XkApsShowDto o) {
+        return this.getStartTime().compareTo(o.getStartTime());
+    }
 }
