@@ -144,6 +144,8 @@ public class XkApsBomServiceImpl implements IXkApsBomService {
     @Transactional(readOnly = true)
     public PageDto<XkApsBomDto> page(PageQueryDto<XkApsBomEntity> pageDto) {
         try {
+            pageDto.setSortField("itemCode");
+            pageDto.setSortOrder("asc");
             Page<XkApsBomEntity> pageData = xkApsBomRepository.queryPage(pageDto);
             if (pageData == null || pageData.getContent() == null || pageData.getContent().size() <= 0) {
                 return null;
