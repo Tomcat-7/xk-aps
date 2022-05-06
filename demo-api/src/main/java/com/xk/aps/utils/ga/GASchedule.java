@@ -16,10 +16,11 @@ import java.util.concurrent.locks.ReentrantLock;
 @Data
 @Service
 public class GASchedule {
+    Random random = new Random();
     private int maxMacNum;
     private List<List<double[][]>> job;
     private List<Double> mac;//机器编号
-    private int popSize = 100;
+    private int popSize = 150;
     private double[][] pop;
     private ArrayList<Double> bestTime = new ArrayList<>();
     private ArrayList<Double> meanTime;
@@ -116,15 +117,16 @@ public class GASchedule {
         int jobLength = lineLength / 2;
 
         for (int i = 0; i < childCross.length; i++) {
-            double[] child = childCross[i];
-
-            if(Math.random() < pm){
+            double[] child = Arrays.copyOf(childCross[i] , childCross[i].length);
+            if(random.nextFloat() < pm){
 
                 //得到突变的工序数目
-                int jobNum = (int)((Math.random() * jobLength * 0.1) / 1);
+                //int jobNum = (int)((Math.random() * jobLength * 0.1) / 1);
+                int jobNum = random.nextInt(jobLength / 10);
                 HashSet<Integer> hashSet = new HashSet<>();
                 while (hashSet.size() < jobNum) {
-                    hashSet.add((int)((Math.random() * jobLength)/1));
+                    hashSet.add(random.nextInt(jobLength));
+                    //hashSet.add((int)((Math.random() * jobLength)/1));
                 }
                 List<Integer> preList = new ArrayList<>();
                 List<Integer> list = new ArrayList<>();
@@ -141,14 +143,14 @@ public class GASchedule {
                     child[preList.get(j) + jobLength] = child[list.get(j) + jobLength];
                 }
 
-
                 //加工机器突变
                 //得到突变机器数量 macMutN
-                int macMutN = (int)(((Math.random() * jobLength * 0.1)/1));
+                //int macMutN = (int)(((Math.random()  * jobLength * 0.1)/1));
+                int macMutN = random.nextInt(jobLength / 10);
                 for (int j = 0; j < macMutN; j++){
                     //选择突变的工序位置
-                    int jobIndex = (int)((jobLength * Math.random())/1);
-
+                    //int jobIndex = (int)((jobLength * Math.random())/1);
+                    int jobIndex = random.nextInt(jobLength);
                     //找出突变的工件号和工序号
                     //工件号
                     double gene = child[jobIndex];
@@ -157,36 +159,19 @@ public class GASchedule {
                     //查出这个工序有几个可选择的加工设备
                     int jobSize = job.get((int) gene - 1).get(checkIndex - 1).length;
                     //生成一个可选数量之内的数
-                    int tmp = (int)((Math.random() * jobSize)/1);
+                    //int tmp = (int)((Math.random() * jobSize)/1);
+                    int tmp = random.nextInt(jobSize);
                     //生成新的机器号
                     double newMacCode = job.get((int) gene - 1).get(checkIndex - 1)[tmp][0];
                     child[jobIndex + jobLength] = newMacCode;
                 }
-                childCross[i] = child;
             }
 
-//            if(Math.random() < pm){
-//                //加工机器突变
-//                //得到突变机器数量 macMutN
-//                int macMutN = (int)(((Math.random() * 0.1 + 0.1) * jobLength)/1);
-//                for (int j = 0; j < macMutN; j++){
-//                    //选择突变的工序位置
-//                    int jobIndex = (int)((jobLength * Math.random())/1);
-//
-//                    //找出突变的工件号和工序号
-//                    //工件号
-//                    double gene = child[jobIndex];
-//                    //工序号
-//                    int checkIndex = checkIndex(child, jobIndex, gene);
-//                    //查出这个工序有几个可选择的加工设备
-//                    int jobSize = job.get((int) gene - 1).get(checkIndex - 1).length;
-//                    //生成一个可选数量之内的数
-//                    int tmp = (int)((Math.random() * jobSize)/1);
-//                    //生成新的机器号
-//                    double newMacCode = job.get((int) gene - 1).get(checkIndex - 1)[tmp][0];
-//                    childCross[i][jobIndex + jobLength] = newMacCode;
-//                }
-//            }
+
+            //如果突变后的适应度更好则保留否则不保留
+            if (deCode(child).getMaxMacTime() < deCode(childCross[i]).getMaxMacTime()){
+                childCross[i] = child;
+            }
         }
         return childCross;
     }

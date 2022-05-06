@@ -13,4 +13,6 @@ import java.util.List;
 public class GAResult {
     public double[] bestOne;
     public List<ArrayList<Double>> workEndList;
+    public ArrayList<Double> bestTime;
+    public Double MaxTime;
 }

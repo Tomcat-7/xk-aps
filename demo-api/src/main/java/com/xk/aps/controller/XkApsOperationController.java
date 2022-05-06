@@ -24,14 +24,14 @@ import java.util.List;
 * @since 2021-12-28
 */
 @RestController
-@RequestMapping("/api/base/xk/xkApsOperation")
-@Api(tags = {"一键生成单表模块管理"}, description = "提供一键生成单表模块模块增删查改接口")
+@RequestMapping("/api/aps/xkApsOperation")
+@Api(tags = {"操作表信息管理"}, description = "提供操作表信息模块增删查改接口")
 public class XkApsOperationController {
 
     @Autowired
     private IXkApsOperationService xkApsOperationService;
 
-    @ApiOperation(value = "分页获取一键生成单表模块", httpMethod = "GET", notes = "分页获取数据，注意分页参数")
+    @ApiOperation(value = "分页获取操作表信息", httpMethod = "GET", notes = "分页获取数据，注意分页参数")
     @RequestMapping(value = "/", method = {RequestMethod.GET})
     @ApiImplicitParams({
             @ApiImplicitParam(value = "当前页码", name = "pageIndex", required = true, dataType = "int",defaultValue = "0"),
@@ -46,21 +46,21 @@ public class XkApsOperationController {
         return new APIResponse<XkApsOperationDto>(pd);
     }
 
-    /**
-     * 获取所有品目信息
-     */
-    @ApiOperation(value = "获取所有品目信息", notes = "获取所有品目信息",httpMethod="GET")
-    @ApiImplicitParam(name = "id", value = "主键ID", required = true, dataType = "String")
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public APIResponse<List<XkApsOperationDto>> list() {
-        return new APIResponse<List<XkApsOperationDto>>(xkApsOperationService.listAll());
-    }
+//    /**
+//     * 获取所有操作表信息
+//     */
+//    @ApiOperation(value = "获取所有操作表信息", notes = "获取所有操作表信息",httpMethod="GET")
+//    @ApiImplicitParam(name = "id", value = "主键ID", required = true, dataType = "String")
+//    @RequestMapping(value = "/list", method = RequestMethod.GET)
+//    public APIResponse<List<XkApsOperationDto>> list() {
+//        return new APIResponse<List<XkApsOperationDto>>(xkApsOperationService.listAll());
+//    }
 
     /**
     * 描述：根据Id查询
     * @param id  一键生成单表模块id
     */
-    @ApiOperation(value = "获取详细信息", notes = "根据url的id来获取详细信息",httpMethod="GET")
+    @ApiOperation(value = "根据id获取操作表信息详细信息", notes = "根据url的id来获取详细信息",httpMethod="GET")
     @ApiImplicitParam(name = "id", value = "主键ID", required = true, dataType = "String")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public APIResponse<XkApsOperationDto> get(@PathVariable("id") String id) {
@@ -71,7 +71,7 @@ public class XkApsOperationController {
     * 描述:创建一键生成单表模块
     * @param formData  一键生成单表模块DTO
     */
-    @ApiOperation(value = "保存一键生成单表模块信息", httpMethod = "POST", notes = "保存信息，注意保存时需要传递的参数")
+    @ApiOperation(value = "保存操作表信息", httpMethod = "POST", notes = "保存信息，注意保存时需要传递的参数")
     @ApiImplicitParam(name = "formData", value = "{table_annotation}信息", required = true, dataType = "XkApsOperationDto")
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public APIResponse<XkApsOperationDto> save(@RequestBody XkApsOperationDto formData)  {
@@ -86,7 +86,7 @@ public class XkApsOperationController {
     * 描述：删除单个一键生成单表模块
     * @param id 一键生成单表模块id
     */
-    @ApiOperation(value = "删除单个一键生成单表模块信息", notes = "根据url的id来指定删除对象", httpMethod = "DELETE")
+    @ApiOperation(value = "删除单个操作表信息", notes = "根据url的id来指定删除对象", httpMethod = "DELETE")
     @ApiImplicitParam(name = "id", value = "主键id", required = true, dataType = "String")
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public APIResponse<XkApsOperationDto> remove(@PathVariable("id") String id) {
@@ -98,7 +98,7 @@ public class XkApsOperationController {
     * 描述：删除多个一键生成单表模块
     * @param ids 一键生成单表模块ids
     */
-    @ApiOperation(value = "删除多个一键生成单表模块信息", notes = "根据url的id来指定删除对象", httpMethod = "DELETE")
+    @ApiOperation(value = "删除多个操作表信息", notes = "根据url的id来指定删除对象", httpMethod = "DELETE")
     @ApiImplicitParam(name = "ids", value = "id1,id2,id3....(多个主键，逗号分割)", required = true, dataType = "String")
     @RequestMapping(value = "/multiDel", method = RequestMethod.DELETE)
     public APIResponse<XkApsOperationDto> multiDel(String ids) {
@@ -110,7 +110,7 @@ public class XkApsOperationController {
     * 描述：更新一键生成单表模块
     * @param
     */
-    @ApiOperation(value = "更新一键生成单表模块数据", httpMethod = "PUT")
+    @ApiOperation(value = "更新操作表信息数据", httpMethod = "PUT")
     @ApiImplicitParams({
     @ApiImplicitParam(required = true, name = "id", paramType = "path", dataType = "String", value = "id"),
     @ApiImplicitParam(name = "formData", value = "更新信息", required = true, dataType = "XkApsOperationDto")})
