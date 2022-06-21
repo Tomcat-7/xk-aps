@@ -46,6 +46,9 @@ public class XkApsOperationServiceImpl implements IXkApsOperationService {
             XkApsOperationEntity xkApsOperationEntity = new XkApsOperationEntity();
             if (formData != null && !StringUtils.isEmpty(formData.getId())) {
                 xkApsOperationEntity = xkApsOperationRepository.xkFindById(formData.getId());
+                if (xkApsOperationEntity == null){
+                    xkApsOperationEntity = new XkApsOperationEntity();
+                }
             }
 
             BeanMapperUtils.map(formData, xkApsOperationEntity);
@@ -138,6 +141,21 @@ public class XkApsOperationServiceImpl implements IXkApsOperationService {
             logger.error("查询所有数据失败,{}",e);
             e.printStackTrace();
             throw new ServiceException("查询所有数据失败", CommonErrorCode.SELECT_ERROR);
+        }
+    }
+
+    @Override
+    public void refresh(List<XkApsOperationDto> list) {
+        try {
+            if (list != null && list.size() != 0){
+                list.forEach((formData)->{
+                    this.save(formData);
+                });
+            }
+        } catch (Exception e) {
+            logger.error("更新数据失败,{}",e);
+            e.printStackTrace();
+            throw new ServiceException("更新数据失败", CommonErrorCode.SELECT_ERROR);
         }
     }
 

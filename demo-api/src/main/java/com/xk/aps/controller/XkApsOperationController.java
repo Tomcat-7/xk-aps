@@ -1,6 +1,7 @@
 package com.xk.aps.controller;
 
 
+import com.xk.aps.model.dto.XkApsItemDto;
 import com.xk.aps.model.dto.XkApsOperationDto;
 import com.xk.framework.common.APIResponse;
 import com.xk.framework.common.PageDto;
@@ -46,15 +47,15 @@ public class XkApsOperationController {
         return new APIResponse<XkApsOperationDto>(pd);
     }
 
-//    /**
-//     * 获取所有操作表信息
-//     */
-//    @ApiOperation(value = "获取所有操作表信息", notes = "获取所有操作表信息",httpMethod="GET")
-//    @ApiImplicitParam(name = "id", value = "主键ID", required = true, dataType = "String")
-//    @RequestMapping(value = "/list", method = RequestMethod.GET)
-//    public APIResponse<List<XkApsOperationDto>> list() {
-//        return new APIResponse<List<XkApsOperationDto>>(xkApsOperationService.listAll());
-//    }
+    /**
+     * 从BPM系统远程更新所有操作表信息
+     */
+    @ApiOperation(value = "从BPM系统远程更新所有操作表信息", notes = "从BPM系统远程更新所有操作表信息",httpMethod="POST")
+    @ApiImplicitParam(name = "list", value = "操作表信息", required = true, dataType = "List")
+    @RequestMapping(value = "/list", method = RequestMethod.POST)
+    public void list(@RequestBody List<XkApsOperationDto> list) {
+        xkApsOperationService.refresh(list);
+    }
 
     /**
     * 描述：根据Id查询

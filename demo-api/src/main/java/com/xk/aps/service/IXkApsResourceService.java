@@ -54,4 +54,6 @@ public interface IXkApsResourceService{
     void remove(String id);
 
     List<XkApsResourceDto> listAll();
+
+    void refresh(List<XkApsResourceDto> list);
 }

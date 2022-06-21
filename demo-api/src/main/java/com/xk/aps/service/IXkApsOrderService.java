@@ -57,4 +57,6 @@ public interface IXkApsOrderService{
     List<XkApsOrderDto> listAll();
 
     List<XkApsOrderDto> schedule(String ids);
+
+    void refresh(List<XkApsOrderDto> list);
 }

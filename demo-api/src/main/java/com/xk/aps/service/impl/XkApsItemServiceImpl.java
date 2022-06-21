@@ -49,6 +49,9 @@ public class XkApsItemServiceImpl implements IXkApsItemService {
             XkApsItemEntity xkApsItemEntity = new XkApsItemEntity();
             if (formData != null && !StringUtils.isEmpty(formData.getId())) {
                 xkApsItemEntity = xkApsItemRepository.xkFindById(formData.getId());
+                if (xkApsItemEntity == null){
+                    xkApsItemEntity = new XkApsItemEntity();
+                }
             }
 
             BeanMapperUtils.map(formData, xkApsItemEntity);
@@ -185,7 +188,29 @@ public class XkApsItemServiceImpl implements IXkApsItemService {
             e.printStackTrace();
             throw new ServiceException("查询数据失败", CommonErrorCode.SELECT_ERROR);
         }
-    };
+    }
 
+    @Override
+    public void refresh(List<XkApsItemDto> list) {
+        try {
+            if (list != null && list.size() != 0){
+                list.forEach((formData)->{
+                    XkApsItemDto curItemDto = new XkApsItemDto();
+                    curItemDto.setId(formData.getId());
+                    if (formData.getProject() == null && formData.getProject().equalsIgnoreCase("")){
+                        curItemDto.setProject("1");
+                    } else {
+                        curItemDto.setProject(formData.getProject());
+                    }
+                    curItemDto.setItemCode(formData.getItemCode());
+                    curItemDto.setItemName(formData.getItemName());
+                    this.save(curItemDto);
+                });
+            }
+        } catch (Exception e) {
+            logger.error("更新数据失败,{}",e);
+            e.printStackTrace();
+            throw new ServiceException("更新数据失败", CommonErrorCode.SELECT_ERROR);
+        }
+    }
 }
-

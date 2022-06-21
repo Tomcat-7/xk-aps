@@ -59,15 +59,15 @@ public class XkApsOrderController {
         return new APIResponse<List<XkApsOrderDto>>(schedule);
     }
 
-//    /**
-//     * 描述：获取所有订单信息
-//     */
-//    @ApiOperation(value = "获取订单详细信息", notes = "根据url的id来获取详细信息",httpMethod="GET")
-//    @ApiImplicitParam(name = "id", value = "主键ID", required = true, dataType = "String")
-//    @RequestMapping(value = "/list", method = RequestMethod.GET)
-//    public APIResponse<List<XkApsOrderDto>> list() {
-//        return new APIResponse<List<XkApsOrderDto>>(xkApsOrderService.listAll());
-//    }
+    /**
+     * 描述：更新所有订单信息
+     */
+    @ApiOperation(value = "从BPM系统远程更新所有订单详细信息", notes = "从BPM系统远程更新所有订单详细信息",httpMethod="POST")
+    @ApiImplicitParam(name = "list", value = "订单表数据", required = true, dataType = "List")
+    @RequestMapping(value = "/list", method = RequestMethod.POST)
+    public void list(@RequestBody List<XkApsOrderDto> list) {
+        xkApsOrderService.refresh(list);
+    }
 
     /**
     * 描述：根据Id查询

@@ -54,4 +54,6 @@ public interface IXkApsOperationService{
     void remove(String id);
 
     List<XkApsOperationDto> listAll();
+
+    void refresh(List<XkApsOperationDto> list);
 }

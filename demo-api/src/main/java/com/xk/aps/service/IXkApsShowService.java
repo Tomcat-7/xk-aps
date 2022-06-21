@@ -2,6 +2,7 @@ package com.xk.aps.service;
 
 import com.xk.aps.model.dto.XkApsGanttDto;
 import com.xk.aps.model.dto.XkApsMatlabInDto;
+import com.xk.aps.model.dto.XkApsShowChartDto;
 import com.xk.aps.model.dto.XkApsShowDto;
 import com.xk.framework.common.PageDto;
 import com.xk.framework.common.PageQueryDto;
@@ -62,4 +63,12 @@ public interface IXkApsShowService{
     List<XkApsGanttDto> orderGanttList();
 
     List<XkApsGanttDto> resourceGanttList();
+
+    List<String> getEnergyConsumption();
+
+    List<XkApsShowChartDto> getOrderNumber();
+
+    List<XkApsShowChartDto> getProcessesNumber();
+
+    List<XkApsShowChartDto> BottleneckProcess();
 }

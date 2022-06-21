@@ -2,6 +2,7 @@ package com.xk.aps.controller;
 
 
 import com.xk.aps.model.dto.XkApsGanttDto;
+import com.xk.aps.model.dto.XkApsShowChartDto;
 import com.xk.aps.model.dto.XkApsShowDto;
 import com.xk.framework.common.APIResponse;
 import com.xk.framework.common.PageDto;
@@ -79,6 +80,46 @@ public class XkApsShowController {
     }
 
     /**
+     * 描述：获取能耗率画图数据
+     * @param
+     */
+    @ApiOperation(value = "获取能耗率画图数据", notes = "获取能耗率画图数据",httpMethod="GET")
+    @RequestMapping(value = "/resource/energyConsumption", method = RequestMethod.GET)
+    public APIResponse<List<String>> resourceEnergyConsumption() {
+        return new APIResponse<List<String>>(xkApsShowService.getEnergyConsumption());
+    }
+
+    /**
+     * 描述：获取订单生产产品数量画图数据
+     * @param
+     */
+    @ApiOperation(value = "获取能耗率画图数据", notes = "获取能耗率画图数据",httpMethod="GET")
+    @RequestMapping(value = "/resource/orderNumber", method = RequestMethod.GET)
+    public APIResponse<List<XkApsShowChartDto>> resourceOrderNumber() {
+        return new APIResponse<List<XkApsShowChartDto>>(xkApsShowService.getOrderNumber());
+    }
+
+    /**
+     * 描述：获取产品加工工序数目画图数据
+     * @param
+     */
+    @ApiOperation(value = "获取能耗率画图数据", notes = "获取能耗率画图数据",httpMethod="GET")
+    @RequestMapping(value = "/resource/processesNumber", method = RequestMethod.GET)
+    public APIResponse<List<XkApsShowChartDto>> resourceProcessesNumber() {
+        return new APIResponse<List<XkApsShowChartDto>>(xkApsShowService.getProcessesNumber());
+    }
+
+    /**
+     * 描述：获取产品瓶颈工序以及瓶颈工序时间画图数据
+     * @param
+     */
+    @ApiOperation(value = "获取能耗率画图数据", notes = "获取能耗率画图数据",httpMethod="GET")
+    @RequestMapping(value = "/resource/bottleneckProcess", method = RequestMethod.GET)
+    public APIResponse<List<XkApsShowChartDto>> resourceBottleneckProcess() {
+        return new APIResponse<List<XkApsShowChartDto>>(xkApsShowService.BottleneckProcess());
+    }
+
+    /**
     * 描述：根据Id查询
     * @param id  一键生成单表模块id
     */
@@ -115,6 +156,7 @@ public class XkApsShowController {
             xkApsShowService.remove(id);
         return new APIResponse<XkApsShowDto>(0, "数据删除成功");
     }
+
 
     /**
     * 描述：删除多个一键生成单表模块

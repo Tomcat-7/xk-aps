@@ -75,6 +75,9 @@ public class XkApsOrderServiceImpl implements IXkApsOrderService {
             XkApsOrderEntity xkApsOrderEntity = new XkApsOrderEntity();
             if (formData != null && !StringUtils.isEmpty(formData.getId())) {
                 xkApsOrderEntity = xkApsOrderRepository.xkFindById(formData.getId());
+                if (xkApsOrderEntity == null){
+                    xkApsOrderEntity = new XkApsOrderEntity();
+                }
             }
 
             BeanMapperUtils.map(formData, xkApsOrderEntity);
@@ -240,6 +243,22 @@ public class XkApsOrderServiceImpl implements IXkApsOrderService {
             e.printStackTrace();
             throw new ServiceException("排序失败", CommonErrorCode.BAD_REQUEST);
         }
+    }
+
+    @Override
+    public void refresh(List<XkApsOrderDto> list) {
+        try {
+            if (list != null && list.size() != 0){
+                list.forEach((formData)->{
+                    this.save(formData);
+                });
+            }
+        } catch (Exception e) {
+            logger.error("更新数据失败,{}",e);
+            e.printStackTrace();
+            throw new ServiceException("更新数据失败", CommonErrorCode.SELECT_ERROR);
+        }
+
     }
 
     private List<XkApsOrderDto> showDataAfterSchedule(List<XkApsResourceDto> resourceDtos, List<XkApsBomDto> bomDtos, List<XkApsShowDto> showDtos, List<XkApsOperationDto> operationDtos, List<XkApsOrderDto> scheduling) {

@@ -56,4 +56,6 @@ public interface IXkApsItemService{
    List<XkApsItemDto> listAll();
 
    String getObjectName(String objectCode);
+
+    void refresh(List<XkApsItemDto> list);
 }

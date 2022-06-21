@@ -2,6 +2,7 @@ package com.xk.aps.controller;
 
 
 import com.xk.aps.model.dto.XkApsItemDto;
+import com.xk.aps.model.dto.XkApsShowDto;
 import com.xk.framework.common.APIResponse;
 import com.xk.framework.common.PageDto;
 import com.xk.framework.common.PageQueryDto;
@@ -10,12 +11,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.xk.aps.model.entity.XkApsItemEntity;
 import com.xk.aps.service.IXkApsItemService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -45,16 +48,16 @@ public class XkApsItemController {
         return new APIResponse<XkApsItemDto>(pd);
     }
 
-//    /**
-//     * 描述：获取所有品目信息
-//     * @param
-//     */
-//    @ApiOperation(value = "获取所有品目信息", notes = "获取所有品目信息",httpMethod="GET")
-//    @ApiImplicitParam(name = "id", value = "主键ID", required = true, dataType = "String")
-//    @RequestMapping(value = "/list", method = RequestMethod.GET)
-//    public APIResponse<List<XkApsItemDto>> list() {
-//        return new APIResponse<List<XkApsItemDto>>(xkApsItemService.listAll());
-//    }
+    /**
+     * 描述：从BPM系统远程更新所有品目信息
+     * @param
+     */
+    @ApiOperation(value = "从BPM系统远程更新所有品目信息", notes = "从BPM系统远程更新所有品目信息",httpMethod="POST")
+    @ApiImplicitParam(name = "list", value = "品目表数据", required = true, dataType = "List")
+    @RequestMapping(value = "/list", method = RequestMethod.POST)
+    public void list(@RequestBody List<XkApsItemDto> list) {
+        xkApsItemService.refresh(list);
+    }
 
     /**
     * 描述：根据Id查询

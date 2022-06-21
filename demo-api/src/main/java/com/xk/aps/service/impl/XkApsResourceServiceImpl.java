@@ -1,6 +1,7 @@
 package com.xk.aps.service.impl;
 
 
+import com.xk.aps.model.dto.XkApsItemDto;
 import com.xk.aps.model.dto.XkApsOrderDto;
 import com.xk.aps.model.entity.XkApsOrderEntity;
 import com.xk.framework.common.*;
@@ -45,6 +46,9 @@ public class XkApsResourceServiceImpl implements IXkApsResourceService {
             XkApsResourceEntity xkApsResourceEntity = new XkApsResourceEntity();
             if (formData != null && !StringUtils.isEmpty(formData.getId())) {
                 xkApsResourceEntity = xkApsResourceRepository.xkFindById(formData.getId());
+                if (xkApsResourceEntity == null){
+                    xkApsResourceEntity = new XkApsResourceEntity();
+                }
             }
 
             BeanMapperUtils.map(formData, xkApsResourceEntity);
@@ -132,6 +136,21 @@ public class XkApsResourceServiceImpl implements IXkApsResourceService {
             logger.error("查询所有数据失败,{}",e);
             e.printStackTrace();
             throw new ServiceException("查询所有数据失败", CommonErrorCode.SELECT_ERROR);
+        }
+    }
+
+    @Override
+    public void refresh(List<XkApsResourceDto> list) {
+        try {
+            if (list != null && list.size() != 0){
+                list.forEach((formData)->{
+                    this.save(formData);
+                });
+            }
+        } catch (Exception e) {
+            logger.error("更新数据失败,{}",e);
+            e.printStackTrace();
+            throw new ServiceException("更新数据失败", CommonErrorCode.SELECT_ERROR);
         }
     }
 

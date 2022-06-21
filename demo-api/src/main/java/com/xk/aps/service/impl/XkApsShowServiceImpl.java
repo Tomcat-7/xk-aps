@@ -2,10 +2,13 @@ package com.xk.aps.service.impl;
 
 
 import com.xk.aps.dao.XkApsBomRepository;
+import com.xk.aps.dao.XkApsOrderRepository;
 import com.xk.aps.dao.XkApsShowRepository;
 import com.xk.aps.model.dto.*;
 import com.xk.aps.model.entity.XkApsBomEntity;
+import com.xk.aps.model.entity.XkApsOrderEntity;
 import com.xk.aps.service.IXkApsItemService;
+import com.xk.aps.service.IXkApsOrderService;
 import com.xk.framework.common.*;
 
 import com.xk.framework.jpa.specification.SimpleSpecificationBuilder;
@@ -40,6 +43,9 @@ public class XkApsShowServiceImpl implements IXkApsShowService {
 
     @Autowired
     private XkApsBomRepository xkApsBomRepository;
+
+    @Autowired
+    private XkApsOrderRepository xkApsOrderRepository;
 
     @Autowired
     private IXkApsItemService xkApsItemService;
@@ -332,6 +338,87 @@ public class XkApsShowServiceImpl implements IXkApsShowService {
         }
         return ganttDtoList;
     }
+
+    /**
+     * 能耗率画图数据
+     */
+    @Override
+    public List<String> getEnergyConsumption() {
+        List<String> result = new ArrayList<>();
+        String[] strings = new String[]{"78%" , "82%" , "85%" , "87%" , "89%" , "79%" , "76%" , "80%" , "84%" , "78%" , "73%" , "71%" , "69%" , "65%" , "69%" ,"73%" , "77%" , "79%" , "86%", "89%" , "85%" , "81%" , "87%" , "80%" , "78%" , "75%" , "70%" , "74%" , "77%" , "80%"};
+        for (String item : strings) {
+            result.add(item);
+        }
+        return result;
+    }
+
+    /**
+     * 订单生产数量画图数据
+     */
+    @Override
+    public List<XkApsShowChartDto> getOrderNumber() {
+        List<XkApsOrderEntity> orderList = xkApsOrderRepository.findAll();
+        Map<String , Integer> map = new HashMap<>();
+        for (XkApsOrderEntity xkApsOrderEntity : orderList) {
+            map.put(xkApsOrderEntity.getItemCode() , map.getOrDefault(xkApsOrderEntity.getItemCode() , 0 ) + xkApsOrderEntity.getOrderNumber());
+        }
+        List<XkApsShowChartDto> result = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : map.entrySet()) {
+            XkApsShowChartDto curItem = new XkApsShowChartDto();
+            curItem.setItemCode(entry.getKey());
+            curItem.setProductionNumber(entry.getValue());
+
+            result.add(curItem);
+        }
+        return result;
+    }
+
+    /**
+     * 产品工序数目画图数据
+     */
+    @Override
+    public List<XkApsShowChartDto> getProcessesNumber() {
+        List<XkApsBomEntity> bomRepositoryAll = xkApsBomRepository.findAll();
+        Map<String , Integer> map = new HashMap<>();
+        for (XkApsBomEntity item : bomRepositoryAll) {
+            map.put(item.getItemCode() , Math.max(map.getOrDefault(item.getItemCode() , 0) , item.getBeforeCode()));
+        }
+        List<XkApsShowChartDto> result = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : map.entrySet()) {
+            XkApsShowChartDto curDto = new XkApsShowChartDto();
+            curDto.setItemCode(entry.getKey());
+            curDto.setProcessesNumber(entry.getValue());
+            result.add(curDto);
+        }
+        return result;
+    }
+
+    /**
+     * 产品瓶颈工序
+     */
+    @Override
+    public List<XkApsShowChartDto> BottleneckProcess() {
+        List<XkApsBomEntity> bomRepositoryAll = xkApsBomRepository.findAll();
+        Map<String , Double[]> map = new HashMap<>();
+        for (XkApsBomEntity item : bomRepositoryAll) {
+            if (!map.containsKey(item.getItemCode())){
+                map.put(item.getItemCode() , new Double[]{item.getBeforeCode() * 1.0 , item.getManufacturingTime()});
+            }
+            if (item.getManufacturingTime() > map.get(item.getItemCode())[1]){
+                map.put(item.getItemCode() , new Double[]{item.getBeforeCode() * 1.0 , item.getManufacturingTime()});
+            }
+        }
+        List<XkApsShowChartDto> result = new ArrayList<>();
+        for (Map.Entry<String, Double[]> entry : map.entrySet()) {
+            XkApsShowChartDto curDto = new XkApsShowChartDto();
+            curDto.setItemCode(entry.getKey());
+            curDto.setBottleneckProcess(String.valueOf(entry.getValue()[0]));
+            curDto.setBottleneckProcessTime(String.valueOf(entry.getValue()[1]));
+            result.add(curDto);
+        }
+        return result;
+    }
+
 
     public List<XkApsBomEntity> getBomByItemCode(String itemCode){
         SimpleSpecificationBuilder<XkApsBomEntity> ssb1 = new SimpleSpecificationBuilder<XkApsBomEntity>();

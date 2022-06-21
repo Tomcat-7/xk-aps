@@ -51,16 +51,16 @@ public class XkApsBomController {
         return new APIResponse<XkApsBomDto>(pd);
     }
 
-//    /**
-//     * 描述：获取Bom表所有数据
-//     * @param
-//     */
-//    @ApiOperation(value = "获取所有Bom表数据", notes = "获取所有Bom表数据",httpMethod="GET")
-//    @ApiImplicitParam(name = "list", value = "获取所有Bom表数据", required = true, dataType = "String")
-//    @RequestMapping(value = "/list", method = RequestMethod.GET)
-//    public APIResponse<List<XkApsBomDto>> list() {
-//        return new APIResponse<List<XkApsBomDto>>(xkApsBomService.listAll());
-//    }
+    /**
+     * 描述：从BPM系统远程更新所有品目信息
+     * @param
+     */
+    @ApiOperation(value = "从BPM系统远程更新所有品目信息", notes = "从BPM系统远程更新所有品目信息",httpMethod="POST")
+    @ApiImplicitParam(name = "list", value = "所有品目信息", required = true, dataType = "List")
+    @RequestMapping(value = "/list", method = RequestMethod.POST)
+    public void list(@RequestBody List<XkApsBomDto> list) {
+        xkApsBomService.refresh(list);
+    }
 
     /**
     * 描述：根据Id查询

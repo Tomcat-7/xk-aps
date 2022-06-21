@@ -46,15 +46,15 @@ public class XkApsResourceController {
         return new APIResponse<XkApsResourceDto>(pd);
     }
 
-//    /**
-//     * 描述: 获取资源表所有数据
-//     */
-//    @ApiOperation(value = "获取资源表详细信息", notes = "根据url的id来获取详细信息",httpMethod="GET")
-//    @ApiImplicitParam(name = "id", value = "主键ID", required = true, dataType = "String")
-//    @RequestMapping(value = "/list", method = RequestMethod.GET)
-//    public APIResponse<List<XkApsResourceDto>> list() {
-//        return new APIResponse<List<XkApsResourceDto>>(xkApsResourceService.listAll());
-//    }
+    /**
+     * 描述: 从BPM系统远程更新所有资源表数据
+     */
+    @ApiOperation(value = "从BPM系统远程更新所有资源表数据", notes = "从BPM系统远程更新所有资源表数据",httpMethod="POST")
+    @ApiImplicitParam(name = "list", value = "资源表数据", required = true, dataType = "List")
+    @RequestMapping(value = "/list", method = RequestMethod.POST)
+    public void list(@RequestBody List<XkApsResourceDto> list) {
+        xkApsResourceService.refresh(list);
+    }
 
     /**
     * 描述：根据Id查询

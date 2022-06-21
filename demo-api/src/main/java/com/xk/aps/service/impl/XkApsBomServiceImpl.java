@@ -43,6 +43,9 @@ public class XkApsBomServiceImpl implements IXkApsBomService {
             XkApsBomEntity xkApsBomEntity = new XkApsBomEntity();
             if (formData != null && !StringUtils.isEmpty(formData.getId())) {
                 xkApsBomEntity = xkApsBomRepository.xkFindById(formData.getId());
+                if (xkApsBomEntity == null){
+                    xkApsBomEntity = new XkApsBomEntity();
+                }
             }
 
             BeanMapperUtils.map(formData, xkApsBomEntity);
@@ -131,6 +134,21 @@ public class XkApsBomServiceImpl implements IXkApsBomService {
             logger.error("查询所有数据失败,{}",e);
             e.printStackTrace();
             throw new ServiceException("查询所有数据失败", CommonErrorCode.SELECT_ERROR);
+        }
+    }
+
+    @Override
+    public void refresh(List<XkApsBomDto> list) {
+        try {
+            if (list != null && list.size() != 0){
+                list.forEach((formData)->{
+                    this.save(formData);
+                });
+            }
+        } catch (Exception e) {
+            logger.error("更新数据失败,{}",e);
+            e.printStackTrace();
+            throw new ServiceException("更新数据失败", CommonErrorCode.SELECT_ERROR);
         }
     }
 

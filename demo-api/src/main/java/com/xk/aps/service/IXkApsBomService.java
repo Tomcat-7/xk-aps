@@ -54,4 +54,6 @@ public interface IXkApsBomService{
    void remove(String id);
 
     List<XkApsBomDto> listAll();
+
+    void refresh(List<XkApsBomDto> list);
 }
