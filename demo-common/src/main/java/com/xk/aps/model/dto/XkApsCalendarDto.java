@@ -51,6 +51,45 @@ public class XkApsCalendarDto extends BaseDto{
     */
     @ApiModelProperty(value = "备注")
     private String calendarNote;
-
+    /**
+     *设备电压
+     */
+    @ApiModelProperty(value = "电压")
+    private String resourceVoltage;
+    /**
+     *设备电流1
+     */
+    @ApiModelProperty(value = "电流1")
+    private String resourceCurrent1;
+    /**
+     *设备电流2
+     */
+    @ApiModelProperty(value = "电流2")
+    private String resourceCurrent2;
+    /**
+     *设备电流3
+     */
+    @ApiModelProperty(value = "电流3")
+    private String resourceCurrent3;
+    /**
+     *设备温度
+     */
+    @ApiModelProperty(value = "设备温度")
+    private String resourceTemperature;
+    /**
+     *日度耗电量
+     */
+    @ApiModelProperty(value = "日度耗电量")
+    private String powerConsumptionDay;
+    /**
+     *周度耗电量
+     */
+    @ApiModelProperty(value = "周度耗电量")
+    private String powerConsumptionWeek;
+    /**
+     *月度耗电量
+     */
+    @ApiModelProperty(value = "周度耗电量")
+    private String powerConsumptionMouth;
 
 }
